@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useLanguage } from './LanguageContext';
 import ScrollReveal from './ScrollReveal';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { ArrowUpRight, ZoomIn, ZoomOut, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowUpRight, ZoomIn, ZoomOut, RotateCcw, ChevronLeft, ChevronRight, X, MapPin } from 'lucide-react';
 
 interface ProjectHotspot {
   id: string;
@@ -48,22 +48,54 @@ function projectSVG(lon: number, lat: number) {
 }
 
 const hotspots: ProjectHotspot[] = [
-  { id: "p1",  num: "01", year: "2020", sector: "THT",  name: "Poste 400/220 kV Larbaa",            nameEn: "400/220 kV Substation Larbaa",           client: "SONELGAZ STOS",       location: "W. Blida",         scope: "Poste electrique THT complet, massifs beton et raccordement reseau national.",       scopeEn: "Complete HV substation, concrete foundations and national grid connection.",        image: "/images/tamma_real/larbaa_full.webp",          leftPct: 57.7, topPct: 3.7 },
-  { id: "p2",  num: "02", year: "2022", sector: "GIS",  name: "Poste GIS 60/30 kV Eucalyptus",     nameEn: "GIS Substation 60/30 kV Eucalyptus",     client: "SONELGAZ ENGINEERING", location: "W. Alger",         scope: "Montage GIS Siemens SF6, caniveaux techniques, essais dielectriques.",             scopeEn: "Siemens SF6 GIS assembly, technical ducts and dielectric testing.",              image: "/images/tamma_real/eucalyptus_gis.webp",      leftPct: 57.0, topPct: 1.9 },
-  { id: "p3",  num: "03", year: "2023", sector: "GIS",  name: "Poste GIS 60/10 kV Bouzereah",     nameEn: "GIS Substation 60/10 kV Bouzereah",     client: "SONELGAZ ENGINEERING", location: "W. Alger",         scope: "Montage sous enveloppe mettallique, controle-commande.",                           scopeEn: "Metal-enclosed switchgear assembly and SCADA.",                                   image: "/images/tamma_real/larbaa_switchyard.webp",   leftPct: 56.3, topPct: 1.7 },
-  { id: "p4",  num: "04", year: "2021", sector: "THT",  name: "Poste Injecteur 400/220 kV",       nameEn: "Injector Substation 400/220 kV",         client: "SONELGAZ STOS",       location: "W. Setif",        scope: "Evacuation centrale thermique, fondations transformateurs, montage THT.",             scopeEn: "Power plant evacuation, transformer foundations and HV assembly.",               image: "/images/tamma_real/ain_arnat_full.webp",       leftPct: 68.2, topPct: 5.0 },
-  { id: "p5",  num: "05", year: "2022", sector: "THT",  name: "Poste PACK+ 60/30 kV",             nameEn: "PACK+ Substation 60/30 kV",             client: "SONELGAZ STOS",       location: "W. Djelfa",       scope: "Genie civil, montage electromecanique, essais.",                                     scopeEn: "Civil engineering, electromechanical assembly and testing.",                        image: "/images/tamma_real/ain_arnat_switchyard.webp",  leftPct: 57.8, topPct: 13.3 },
-  { id: "p8",  num: "08", year: "2023", sector: "THT",  name: "Ligne aerienne 400 kV Marsat",     nameEn: "400 kV Overhead Line Marsat",           client: "SONELGAZ STOS",       location: "W. Mostaganem",   scope: "Construction ligne aerienne 400 kV, fondations, levage pylones, tirage cables.",   scopeEn: "400 kV overhead construction, foundations, pylon lifting and cable stringing.",   image: "/images/tamma_real/hadjret_400kv_full.webp",  leftPct: 42.7, topPct: 6.4 },
-  { id: "p9",  num: "09", year: "2021", sector: "THT",  name: "Ligne 400 kV Hadjret Ennous",      nameEn: "400 kV Line Hadjret Ennous",            client: "SONELGAZ STOS",       location: "Tipaza",           scope: "Coupure de ligne 400 kV, pylones mettalliques, reglage cables.",                 scopeEn: "400 kV line section break, metallic pylons and cable tensioning.",               image: "/images/tamma_real/pylon_400kv.webp",          leftPct: 53.8, topPct: 2.8 },
-  { id: "p10", num: "10", year: "2023", sector: "ELEC", name: "Liaison souterraine 60 kV",           nameEn: "60 kV Underground Cable Link",           client: "SONELGAZ STOS",       location: "W. Alger",         scope: "Fouilles, terrassements, cablage et mise en service.",                             scopeEn: "Excavation, earthworks, cabling and commissioning.",                             image: "/images/tamma_real/reghaia_60kv.webp",         leftPct: 58.2, topPct: 2.0 },
-  { id: "p11", num: "11", year: "2022", sector: "ELEC", name: "Ligne 220 kV Cap Blanc Oran",         nameEn: "220 kV Line Cap Blanc Oran",            client: "SONELGAZ STOS",       location: "W. Oran",          scope: "Aero-souterraine 220 kV pour station de dessalement.",                        scopeEn: "220 kV overhead-underground for desalination plant.",                             image: "/images/tamma_real/towers_sunset.webp",       leftPct: 38.9, topPct: 7.7 },
-  { id: "p14", num: "14", year: "2020", sector: "FIBER",name: "Fibre Optique 320 km Djanet",        nameEn: "320 km Fiber Optic Djanet",             client: "ALGERIE TELECOM",     location: "W. Djanet",        scope: "Fouilles mecanisees, pose fourreaux et tirage cables backbone.",            scopeEn: "Mechanized trenching, duct laying and backbone fiber cable pulling.",             image: "/images/tamma_real/towers_sunset.webp",       leftPct: 87.9, topPct: 69.1 },
-  { id: "p15", num: "15", year: "2020", sector: "FIBER",name: "Fibre Optique 160 km Illizi",          nameEn: "160 km Fiber Optic Illizi",               client: "ALGERIE TELECOM",     location: "W. Illizi",         scope: "Terrassement et pose de cable optique backbone.",                             scopeEn: "Earthworks and backbone fiber optic cable laying.",                              image: "/images/tamma_real/towers_sunset.webp",       leftPct: 83.0, topPct: 58.4 },
-  { id: "p18", num: "18", year: "2022", sector: "HYD",  name: "Conduites eau 28 km Ohanet",          nameEn: "28 km Water Pipelines Ohanet",          client: "SONATRACH DP/HMD",     location: "Ohanet",            scope: "Pose/depose conduites eau 4.5\" sur 28 km.",                                  scopeEn: "4.5\" water pipeline installation/removal over 28 km.",                           image: "/images/tamma_real/adrar_pipeline_28inch.webp",leftPct: 64.1, topPct: 46.3 },
-  { id: "p19", num: "19", year: "2023", sector: "EPC",  name: "Usine Dolomite EPC",                  nameEn: "Dolomite Plant EPC",                     client: "ENCC-SPA",            location: "W. Oum El Bouaghi", scope: "Construction cle en main, charpente 1200T, silos, concasseurs.",            scopeEn: "Turnkey construction, 1200T steel structure, silos and crushers.",                    image: "/images/tamma_real/dolomite_plant.webp",       leftPct: 76.4, topPct: 6.7 },
-  { id: "p22", num: "22", year: "2023", sector: "GC",   name: "Workover Hassi Messaoud & Gassi",    nameEn: "Workover Hassi Messaoud & Gassi",       client: "SONATRACH DP/HMD",     location: "Hassi Messaoud",    scope: "Rehabilitation de plateformes de puits workover.",                             scopeEn: "Workover platform rehabilitation.",                                                image: "/images/tamma_real/hmd_workover_platforms.webp",leftPct: 72.2, topPct: 29.8 },
-  { id: "p33", num: "33", year: "2021", sector: "THT",  name: "Ligne 220 kV Phosphate 33 km",        nameEn: "220 kV Phosphate Line 33 km",           client: "SONELGAZ STOS",       location: "W. Tebessa",        scope: "Alimentation electrique complexe pour usine de phosphate.",                    scopeEn: "Complex power supply for phosphate processing plant.",                            image: "/images/tamma_real/pylon_400kv.webp",          leftPct: 81.3, topPct: 9.3 },
+  { id: "p1",  num: "01", year: "2020", sector: "THT",  name: "Poste 400/220 kV Larbaa",            nameEn: "400/220 kV Substation Larbaa",           client: "SONELGAZ STOS",       location: "W. Blida",         scope: "Poste electrique THT complet, massifs beton et raccordement reseau national.",       scopeEn: "Complete HV substation, concrete foundations and national grid connection.",        image: "/images/project-galleries/p1/image-01.png", leftPct: 57.7, topPct: 3.7 },
+  { id: "p2",  num: "02", year: "2022", sector: "GIS",  name: "Poste GIS 60/30 kV Eucalyptus",     nameEn: "GIS Substation 60/30 kV Eucalyptus",     client: "SONELGAZ ENGINEERING", location: "W. Alger",         scope: "Montage GIS Siemens SF6, caniveaux techniques, essais dielectriques.",             scopeEn: "Siemens SF6 GIS assembly, technical ducts and dielectric testing.",              image: "/images/project-galleries/p2/image-01.png", leftPct: 57.0, topPct: 1.9 },
+  { id: "p3",  num: "03", year: "2023", sector: "GIS",  name: "Poste GIS 60/10 kV Bouzereah",     nameEn: "GIS Substation 60/10 kV Bouzereah",     client: "SONELGAZ ENGINEERING", location: "W. Alger",         scope: "Montage sous enveloppe mettallique, controle-commande.",                           scopeEn: "Metal-enclosed switchgear assembly and SCADA.",                                   image: "/images/project-placeholder.svg", leftPct: 56.3, topPct: 1.7 },
+  { id: "p4",  num: "04", year: "2021", sector: "THT",  name: "Poste Injecteur 400/220 kV",       nameEn: "Injector Substation 400/220 kV",         client: "SONELGAZ STOS",       location: "W. Setif",        scope: "Evacuation centrale thermique, fondations transformateurs, montage THT.",             scopeEn: "Power plant evacuation, transformer foundations and HV assembly.",               image: "/images/project-galleries/p4/image-01.png", leftPct: 68.2, topPct: 5.0 },
+  { id: "p5",  num: "05", year: "2022", sector: "THT",  name: "Poste PACK+ 60/30 kV",             nameEn: "PACK+ Substation 60/30 kV",             client: "SONELGAZ STOS",       location: "W. Djelfa",       scope: "Genie civil, montage electromecanique, essais.",                                     scopeEn: "Civil engineering, electromechanical assembly and testing.",                        image: "/images/project-placeholder.svg", leftPct: 57.8, topPct: 13.3 },
+  { id: "p8",  num: "08", year: "2023", sector: "THT",  name: "Ligne aerienne 400 kV Marsat",     nameEn: "400 kV Overhead Line Marsat",           client: "SONELGAZ STOS",       location: "W. Mostaganem",   scope: "Construction ligne aerienne 400 kV, fondations, levage pylones, tirage cables.",   scopeEn: "400 kV overhead construction, foundations, pylon lifting and cable stringing.",   image: "/images/project-galleries/p6/image-01.png", leftPct: 42.7, topPct: 6.4 },
+  { id: "p9",  num: "09", year: "2021", sector: "THT",  name: "Ligne 400 kV Hadjret Ennous",      nameEn: "400 kV Line Hadjret Ennous",            client: "SONELGAZ STOS",       location: "Tipaza",           scope: "Coupure de ligne 400 kV, pylones mettalliques, reglage cables.",                 scopeEn: "400 kV line section break, metallic pylons and cable tensioning.",               image: "/images/project-galleries/p6/image-02.png", leftPct: 53.8, topPct: 2.8 },
+  { id: "p10", num: "10", year: "2023", sector: "ELEC", name: "Liaison souterraine 60 kV",           nameEn: "60 kV Underground Cable Link",           client: "SONELGAZ STOS",       location: "W. Alger",         scope: "Fouilles, terrassements, cablage et mise en service.",                             scopeEn: "Excavation, earthworks, cabling and commissioning.",                             image: "/images/project-galleries/p3/image-01.png", leftPct: 58.2, topPct: 2.0 },
+  { id: "p11", num: "11", year: "2022", sector: "ELEC", name: "Ligne 220 kV Cap Blanc Oran",         nameEn: "220 kV Line Cap Blanc Oran",            client: "SONELGAZ STOS",     location: "W. Oran",          scope: "Aero-souterraine 220 kV pour station de dessalement.",                        scopeEn: "220 kV overhead-underground for desalination plant.",                             image: "/images/project-placeholder.svg", leftPct: 38.9, topPct: 7.7 },
+  { id: "p14", num: "14", year: "2020", sector: "FIBER",name: "Fibre Optique 320 km Djanet",        nameEn: "320 km Fiber Optic Djanet",             client: "ALGERIE TELECOM",     location: "W. Djanet",        scope: "Fouilles mecanisees, pose fourreaux et tirage cables backbone.",            scopeEn: "Mechanized trenching, duct laying and backbone fiber cable pulling.",             image: "/images/project-placeholder.svg", leftPct: 87.9, topPct: 69.1 },
+  { id: "p15", num: "15", year: "2020", sector: "FIBER",name: "Fibre Optique 160 km Illizi",          nameEn: "160 km Fiber Optic Illizi",             client: "ALGERIE TELECOM",     location: "W. Illizi",        scope: "Terrassement et pose de cable optique backbone.",                             scopeEn: "Earthworks and backbone fiber optic cable laying.",                              image: "/images/project-placeholder.svg", leftPct: 83.0, topPct: 58.4 },
+  { id: "p18", num: "18", year: "2022", sector: "HYD",  name: "Conduites eau 28 km Ohanet",          nameEn: "28 km Water Pipelines Ohanet",          client: "SONATRACH DP/HMD",     location: "Ohanet",            scope: "Pose/depose conduites eau 4.5\" sur 28 km.",                                  scopeEn: "4.5\" water pipeline installation/removal over 28 km.",                           image: "/images/project-placeholder.svg", leftPct: 64.1, topPct: 46.3 },
+  { id: "p19", num: "19", year: "2023", sector: "EPC",  name: "Usine Dolomite EPC",                  nameEn: "Dolomite Plant EPC",                     client: "ENCC-SPA",            location: "W. Oum El Bouaghi", scope: "Construction cle en main, charpente 1200T, silos, concasseurs.",            scopeEn: "Turnkey construction, 1200T steel structure, silos and crushers.",                    image: "/images/project-galleries/p7/image-01.png", leftPct: 76.4, topPct: 6.7 },
+  { id: "p22", num: "22", year: "2023", sector: "GC",   name: "Workover Hassi Messaoud & Gassi",    nameEn: "Workover Hassi Messaoud & Gassi",       client: "SONATRACH DP/HMD",     location: "Hassi Messaoud",    scope: "Rehabilitation de plateformes de puits workover.",                             scopeEn: "Workover platform rehabilitation.",                                                image: "/images/project-galleries/p8/image-01.png", leftPct: 72.2, topPct: 29.8 },
+  { id: "p33", num: "33", year: "2021", sector: "THT",  name: "Ligne 220 kV Phosphate 33 km",        nameEn: "220 kV Phosphate Line 33 km",           client: "SONELGAZ STOS",     location: "W. Tebessa",        scope: "Alimentation electrique complexe pour usine de phosphate.",                    scopeEn: "Complex power supply for phosphate processing plant.",                            image: "/images/project-galleries/p6/image-02.png", leftPct: 81.3, topPct: 9.3 },
+  { id: "p6",  num: "06", year: "2022", sector: "EPC",  name: "Travaux centrale et traitement huile", nameEn: "Power Plant and Oil Treatment Works", client: "SONELGAZ ENGINEERING", location: "W. Djelfa", scope: "Travaux de construction et traitement d'huile industrielle.", scopeEn: "Construction and industrial oil treatment works.", image: "/images/project-placeholder.svg", leftPct: 61.0, topPct: 18.0 },
+  { id: "p7",  num: "07", year: "2019", sector: "ELEC", name: "Tests CHELTERS MT/LV Adrar", nameEn: "Adrar MV/LV Shelter Testing", client: "SONATRACH", location: "W. Adrar", scope: "Tests et vérification des shelters électriques MT/LV.", scopeEn: "Testing and verification of MV/LV electrical shelters.", image: "/images/project-placeholder.svg", leftPct: 34.0, topPct: 45.0 },
+  { id: "p12", num: "12", year: "2021", sector: "GC", name: "Génie civil 220 kV Skikda", nameEn: "220 kV Civil Engineering Skikda", client: "SONELGAZ STOS", location: "W. Skikda", scope: "Travaux de génie civil pour ouvrages électriques 220 kV.", scopeEn: "Civil works for 220 kV electrical infrastructure.", image: "/images/project-galleries/p4/image-03.png", leftPct: 79.0, topPct: 5.5 },
+  { id: "p13", num: "13", year: "2023", sector: "THT", name: "Sous-station 60/30 kV RAR", nameEn: "RAR 60/30 kV Substation", client: "SONELGAZ ENGINEERING", location: "Oued Bellil, W. Ghardaia", scope: "Construction d'une sous-station 60/30 kV.", scopeEn: "Construction of a 60/30 kV substation.", image: "/images/project-galleries/p2/image-03.png", leftPct: 64.0, topPct: 31.0 },
+  { id: "p16", num: "16", year: "2022", sector: "GC", name: "Maintenance génie civil", nameEn: "Civil Engineering Maintenance", client: "SONATRACH DP/RN", location: "Rhoud Enouss", scope: "Maintenance des ouvrages de génie civil industriels.", scopeEn: "Maintenance of industrial civil engineering structures.", image: "/images/project-galleries/p8/image-02.png", leftPct: 68.0, topPct: 37.0 },
+  { id: "p17", num: "17", year: "2021", sector: "HYD", name: "Maintenance réseaux hydrauliques HMD", nameEn: "HMD Hydraulic Network Maintenance", client: "SONATRACH DP/HMD", location: "Hassi Messaoud", scope: "Maintenance des réseaux hydrauliques du site HMD.", scopeEn: "Maintenance of HMD site hydraulic networks.", image: "/images/project-galleries/p8/image-03.png", leftPct: 72.0, topPct: 32.0 },
+  { id: "p20", num: "20", year: "2021", sector: "HYD", name: "Pose/dépose conduites eau", nameEn: "Water Pipeline Installation", client: "SONATRACH FOR HMD", location: "Gassi Touil", scope: "Pose et dépose de conduites d'eau industrielles.", scopeEn: "Installation and removal of industrial water pipelines.", image: "/images/project-galleries/p5/image-02.png", leftPct: 75.0, topPct: 39.0 },
+  { id: "p21", num: "21", year: "2020", sector: "GC", name: "Réhabilitation réseaux sanitation", nameEn: "Sanitation Network Rehabilitation", client: "SONATRACH DP/TFT", location: "TFT", scope: "Réhabilitation des réseaux d'assainissement industriels.", scopeEn: "Rehabilitation of industrial sanitation networks.", image: "/images/project-galleries/p8/image-01.png", leftPct: 61.0, topPct: 57.0 },
+  { id: "p23", num: "23", year: "2021", sector: "MNT", name: "Pompes submersibles Berkine", nameEn: "Berkine Submersible Pumps", client: "DIS LTD - WEATHERFORD and ENTP JV", location: "Groupement Berkine", scope: "Fourniture et maintenance de pompes submersibles.", scopeEn: "Supply and maintenance of submersible pumps.", image: "/images/project-galleries/p8/image-02.png", leftPct: 77.0, topPct: 31.0 },
+  { id: "p24", num: "24", year: "2022", sector: "MNT", name: "Location groupes électrogènes", nameEn: "Generator and Cabin Rental", client: "BASP/HMD", location: "BRN", scope: "Location de groupes électrogènes et cabines.", scopeEn: "Rental of generator sets and cabins.", image: "/images/project-galleries/p8/image-03.png", leftPct: 74.0, topPct: 27.0 },
+  { id: "p25", num: "25", year: "2019", sector: "MNT", name: "Location camions et transport", nameEn: "Truck and Personnel Transport Rental", client: "INERGA", location: "Blida", scope: "Location de camions et transport du personnel.", scopeEn: "Truck rental and personnel transportation.", image: "/images/project-galleries/p1/image-02.png", leftPct: 56.0, topPct: 4.5 },
+  { id: "p26", num: "26", year: "2020", sector: "GC", name: "Fourniture magasins d'archives", nameEn: "Archive Store Supply", client: "GROUPEMENT QC", location: "Hassi Messaoud", scope: "Fourniture et aménagement de magasins d'archives.", scopeEn: "Supply and fit-out of archive storage facilities.", image: "/images/project-galleries/p8/image-01.png", leftPct: 71.0, topPct: 30.0 },
+  { id: "p27", num: "27", year: "2023", sector: "HYD", name: "Installation systèmes irrigation", nameEn: "Irrigation System Installation", client: "DSA OUARGLA", location: "Ouargla", scope: "Installation de systèmes d'irrigation.", scopeEn: "Installation of irrigation systems.", image: "/images/project-galleries/p5/image-03.png", leftPct: 72.0, topPct: 39.0 },
+  { id: "p28", num: "28", year: "2021", sector: "MNT", name: "Location bulldozers", nameEn: "Bulldozer Rental", client: "ENAGEO", location: "Hassi Messaoud", scope: "Location d'engins de terrassement lourds.", scopeEn: "Rental of heavy earthmoving equipment.", image: "/images/project-galleries/p8/image-02.png", leftPct: 73.0, topPct: 29.0 },
+  { id: "p29", num: "29", year: "2020", sector: "HYD", name: "Forage puits eau 200 m", nameEn: "200 m Water Well Drilling", client: "DRE TIARET", location: "Sougueur, Tiaret", scope: "Forage et équipement d'un puits d'eau de 200 m.", scopeEn: "Drilling and equipping a 200 m water well.", image: "/images/project-galleries/p5/image-01.png", leftPct: 48.0, topPct: 18.0 },
+  { id: "p30", num: "30", year: "2023", sector: "THT", name: "Poste PACK+ 60/30 kV El Bordjia", nameEn: "El Bordjia PACK+ 60/30 kV Substation", client: "SONELGAZ STOS", location: "El Bordjia, Mostaganem", scope: "Construction d'un poste PACK+ 60/30 kV.", scopeEn: "Construction of a PACK+ 60/30 kV substation.", image: "/images/project-galleries/p2/image-04.png", leftPct: 45.0, topPct: 8.0 },
+  { id: "p31", num: "31", year: "2022", sector: "ELEC", name: "Forage horizontal 60 kV", nameEn: "60 kV Horizontal Drilling", client: "SONELGAZ STOS", location: "Skikda Ville", scope: "Forage horizontal pour liaison électrique 60 kV.", scopeEn: "Horizontal drilling for a 60 kV electrical link.", image: "/images/project-galleries/p3/image-02.png", leftPct: 80.0, topPct: 6.0 },
+  { id: "p32", num: "32", year: "2023", sector: "ELEC", name: "Déroulage câbles 6,5 km AKB", nameEn: "6.5 km AKB Cable Stringing", client: "SONELGAZ STOS", location: "Akbou, W. Bejaia", scope: "Déroulage et raccordement de câbles sur 6,5 km.", scopeEn: "Stringing and connection of cables over 6.5 km.", image: "/images/project-galleries/p3/image-03.png", leftPct: 67.0, topPct: 8.0 },
+  { id: "p34", num: "34", year: "2023", sector: "THT", name: "Levage pylônes 60 kV Zeralda", nameEn: "60 kV Zeralda Pylon Lifting", client: "SONELGAZ STOS", location: "Zeralda, W. Algiers", scope: "Levage et montage de pylônes pour ligne 60 kV.", scopeEn: "Lifting and assembly of pylons for a 60 kV line.", image: "/images/project-galleries/p6/image-01.png", leftPct: 55.0, topPct: 2.5 },
 ];
+
+const OFFICIAL_PHOTO_PROJECTS = new Set(['p1', 'p2', 'p4', 'p8', 'p9', 'p10', 'p19', 'p22']);
+const PROJECT_PLACEHOLDER = '/images/project-placeholder.svg';
+const SECTOR_PLACEHOLDER_IMAGES: Record<string, string> = {
+  THT: '/images/project-placeholders/gis-substation.png',
+  GIS: '/images/project-placeholders/gis-substation.png',
+  ELEC: '/images/project-placeholders/gis-substation.png',
+  HYD: '/images/project-placeholders/hydraulics-water.png',
+  FIBER: '/images/project-placeholders/civil-engineering.png',
+  GC: '/images/project-placeholders/civil-engineering.png',
+  EPC: '/images/project-placeholders/civil-engineering.png',
+  MNT: '/images/project-placeholders/civil-engineering.png',
+};
 
 export default function InteractiveAlgeriaMap() {
   const { language } = useLanguage();
@@ -75,6 +107,10 @@ export default function InteractiveAlgeriaMap() {
   const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [hoveredProject, setHoveredProject] = useState<string | null>(null);
   const [sectorFilter, setSectorFilter] = useState<string>('ALL');
+  const [focusedProject, setFocusedProject] = useState<string | null>(null);
+  const [mapDossierOpen, setMapDossierOpen] = useState(false);
+  const [mapInView, setMapInView] = useState(false);
+  const mapSectionRef = useRef<HTMLElement>(null);
 
   const visibleSectors = Array.from(new Set(hotspots.map((h) => h.sector)));
   const filteredHotspots = sectorFilter === 'ALL' ? hotspots : hotspots.filter((h) => h.sector === sectorFilter);
@@ -82,16 +118,22 @@ export default function InteractiveAlgeriaMap() {
   const selected = filteredHotspots.find((h) => h.id === activeProject) || filteredHotspots[0] || hotspots[0];
   const selectedIdx = filteredHotspots.findIndex((h) => h.id === activeProject);
   const sc = sectorColors[selected.sector] || sectorColors.THT;
+  const selectedPlaceholder = SECTOR_PLACEHOLDER_IMAGES[selected.sector] || PROJECT_PLACEHOLDER;
 
   const toSVG = (pct: number, axis: 'x' | 'y') =>
     axis === 'x' ? (pct / 100) * VIEW_W : (pct / 100) * VIEW_H;
 
   const zoomIn  = () => setZoom((z) => Math.min(z + 0.5, 5));
   const zoomOut = () => setZoom((z) => Math.max(z - 0.5, 0.5));
-  const resetView = () => { setZoom(1); setPan({ x: 0, y: 0 }); };
+  const focusProject = (id: string) => {
+    setActiveProject(id);
+    setFocusedProject(id);
+    setZoom(1.8);
+    setPan({ x: 0, y: 0 });
+  };
+  const resetView = () => { setZoom(1); setPan({ x: 0, y: 0 }); setFocusedProject(null); };
 
   const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
     setZoom((z) => Math.max(0.5, Math.min(5, z + (e.deltaY > 0 ? -0.15 : 0.15))));
   }, []);
 
@@ -124,23 +166,51 @@ export default function InteractiveAlgeriaMap() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && mapDossierOpen) {
+        setMapDossierOpen(false);
+        return;
+      }
       if (e.key === '+' || e.key === '=') setZoom((z) => Math.min(z + 0.5, 5));
       if (e.key === '-') setZoom((z) => Math.max(z - 0.5, 0.5));
       if (e.key === '0') resetView();
       if (e.key === 'ArrowRight' || e.key === 'ArrowDown')
-        setActiveProject(filteredHotspots[Math.min(selectedIdx + 1, filteredHotspots.length - 1)].id);
+        focusProject(filteredHotspots[Math.min(selectedIdx + 1, filteredHotspots.length - 1)].id);
       if (e.key === 'ArrowLeft' || e.key === 'ArrowUp')
-        setActiveProject(filteredHotspots[Math.max(selectedIdx - 1, 0)].id);
+        focusProject(filteredHotspots[Math.max(selectedIdx - 1, 0)].id);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [selectedIdx]);
+  }, [selectedIdx, mapDossierOpen]);
 
-  const mapTransform = `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`;
+  useEffect(() => {
+    if (!mapDossierOpen) return;
+    const html = document.documentElement;
+    const body = document.body;
+    const previous = { htmlOverflow: html.style.overflow, bodyOverflow: body.style.overflow };
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    return () => {
+      html.style.overflow = previous.htmlOverflow;
+      body.style.overflow = previous.bodyOverflow;
+    };
+  }, [mapDossierOpen]);
+
+  useEffect(() => {
+    const section = mapSectionRef.current;
+    if (!section) return;
+    const observer = new IntersectionObserver(([entry]) => setMapInView(entry.isIntersecting), { rootMargin: '160px' });
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
+  const focusOffsetX = focusedProject ? 50 - selected.leftPct : 0;
+  const focusOffsetY = focusedProject ? 50 - selected.topPct : 0;
+  const mapTransform = focusedProject
+    ? `translate(calc(${focusOffsetX}% + ${pan.x}px), calc(${focusOffsetY}% + ${pan.y}px)) scale(${zoom})`
+    : `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`;
 
   return (
-    <section id="map" className="bg-[#08090b] text-white relative overflow-hidden">
-
+    <section ref={mapSectionRef} id="map" className="bg-[var(--color-midnight)] text-white relative overflow-hidden">
       {/* Premium atmospheric layer */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Big warm glow - top right */}
@@ -201,8 +271,15 @@ export default function InteractiveAlgeriaMap() {
 
         {/* Sector filter — compact pill nav */}
         <ScrollReveal delay={0.05}>
-          <div className="flex flex-wrap items-center gap-2 mb-8">
-            <span className="text-[9px] font-mono tracking-[0.2em] text-white/30 uppercase mr-1">
+          <div className="relative w-full pb-1">
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-[#08090b] to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-[#08090b] to-transparent" />
+            <div className="w-full overflow-x-auto scrollbar-hide">
+            <div
+              className="items-center gap-1 sm:gap-2 mb-8 whitespace-nowrap"
+              style={{ display: 'flex', flexWrap: 'nowrap', width: 'max-content', minWidth: '100%' }}
+            >
+            <span className="text-[8px] sm:text-[9px] font-mono tracking-[0.12em] sm:tracking-[0.2em] text-white/30 uppercase mr-1 whitespace-nowrap" style={{ flexShrink: 0 }}>
               {language === 'fr' ? 'Filtrer' : language === 'en' ? 'Filter' : 'تصفية'}:
             </span>
             {['ALL', ...visibleSectors].map((sector) => {
@@ -212,18 +289,20 @@ export default function InteractiveAlgeriaMap() {
                 <button
                   key={sector}
                   type="button"
+                  aria-pressed={isActive}
                   onClick={() => {
                     setSectorFilter(sector);
                     if (sector !== 'ALL') {
                       const first = hotspots.find((h) => h.sector === sector);
-                      if (first) setActiveProject(first.id);
+                      if (first) focusProject(first.id);
                     }
                   }}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-full text-[10px] font-bold tracking-wider transition-all duration-300 active:scale-95 ${
+                  className={`flex whitespace-nowrap items-center gap-1 sm:gap-2 px-2.5 sm:px-3.5 py-2 rounded-full text-[9px] sm:text-[10px] font-bold tracking-[0.02em] sm:tracking-wider transition-all duration-300 active:scale-95 ${
                     isActive
-                      ? 'bg-white text-[#08090b]'
+                      ? 'bg-white text-[#08090b] ring-2 ring-[var(--color-accent)]/40 ring-offset-1 ring-offset-[#08090b]'
                       : 'bg-white/10 text-white/60 hover:bg-white/20 hover:text-white'
                   }`}
+                  style={{ flexShrink: 0, whiteSpace: 'nowrap' }}
                 >
                   {sector !== 'ALL' && (
                     <span
@@ -244,11 +323,14 @@ export default function InteractiveAlgeriaMap() {
                 </button>
               );
             })}
+            </div>
+            </div>
           </div>
         </ScrollReveal>
 
+        <div className="lg:grid lg:grid-cols-12 lg:gap-8">
         {/* Map — main feature */}
-        <ScrollReveal>
+        <ScrollReveal className="lg:col-span-8">
           <div className="relative">
             {/* Frame numbers — editorial detail */}
             <div className="absolute -top-6 left-0 flex items-center gap-2 text-[9px] font-mono tracking-[0.2em] text-white/25 uppercase z-10">
@@ -285,13 +367,13 @@ export default function InteractiveAlgeriaMap() {
               <div className="absolute top-5 left-5 z-20 flex items-center gap-3">
                 <div className="flex items-center gap-px p-1 rounded-xl bg-black/60 backdrop-blur-xl border border-white/[0.08]">
                   <button type="button"
-                    onClick={() => setActiveProject(filteredHotspots[Math.max(selectedIdx - 1, 0)].id)}
+                    onClick={() => focusProject(filteredHotspots[Math.max(selectedIdx - 1, 0)].id)}
                     className="w-8 h-8 rounded-lg flex items-center justify-center text-white/50 hover:text-white hover:bg-white/[0.06] transition-colors">
                     <ChevronLeft className="w-3.5 h-3.5" />
                   </button>
                   <div className="w-px h-4 bg-white/[0.08]" />
                   <button type="button"
-                    onClick={() => setActiveProject(filteredHotspots[Math.min(selectedIdx + 1, filteredHotspots.length - 1)].id)}
+                    onClick={() => focusProject(filteredHotspots[Math.min(selectedIdx + 1, filteredHotspots.length - 1)].id)}
                     className="w-8 h-8 rounded-lg flex items-center justify-center text-white/50 hover:text-white hover:bg-white/[0.06] transition-colors">
                     <ChevronRight className="w-3.5 h-3.5" />
                   </button>
@@ -307,6 +389,7 @@ export default function InteractiveAlgeriaMap() {
                 style={{
                   aspectRatio: '16/10',
                   cursor: isDragging ? 'grabbing' : 'grab',
+                  touchAction: 'pan-y',
                 }}
                 onWheel={handleWheel}
                 onMouseDown={handleMouseDown}
@@ -362,15 +445,15 @@ export default function InteractiveAlgeriaMap() {
                       const r = isActive ? 6 : isHovered ? 5 : 3.5;
 
                       return (
-                        <g key={h.id} style={{ cursor: 'pointer' }}
-                           onClick={() => setActiveProject(h.id)}
+                        <g key={h.id} style={{ cursor: 'pointer', opacity: focusedProject && focusedProject !== h.id ? 0.28 : 1, transition: 'opacity 0.3s ease' }}
+                           onClick={() => focusProject(h.id)}
                            onMouseEnter={() => setHoveredProject(h.id)}
                            onMouseLeave={() => setHoveredProject(null)}>
                           {isActive && (
                             <>
                               <circle cx={px} cy={py} r="14" fill="none" stroke={hsc.dot} strokeWidth="0.8" strokeOpacity="0.4">
-                                <animate attributeName="r" values="8;22;8" dur="2.8s" repeatCount="indefinite" />
-                                <animate attributeName="stroke-opacity" values="0.5;0.05;0.5" dur="2.8s" repeatCount="indefinite" />
+                                {mapInView && !shouldReduceMotion && <animate attributeName="r" values="8;22;8" dur="2.8s" repeatCount="indefinite" />}
+                                {mapInView && !shouldReduceMotion && <animate attributeName="stroke-opacity" values="0.5;0.05;0.5" dur="2.8s" repeatCount="indefinite" />}
                               </circle>
                               <circle cx={px} cy={py} r="6" fill={hsc.dot} filter="url(#bigGlow)" fillOpacity="0.4" />
                             </>
@@ -395,8 +478,8 @@ export default function InteractiveAlgeriaMap() {
                       return (
                         <g>
                           <circle cx={hq.x} cy={hq.y} r="10" fill="none" stroke="#d4773b" strokeWidth="0.6" strokeOpacity="0.5">
-                            <animate attributeName="r" values="6;14;6" dur="3s" repeatCount="indefinite" />
-                            <animate attributeName="stroke-opacity" values="0.5;0.1;0.5" dur="3s" repeatCount="indefinite" />
+                            {mapInView && !shouldReduceMotion && <animate attributeName="r" values="6;14;6" dur="3s" repeatCount="indefinite" />}
+                            {mapInView && !shouldReduceMotion && <animate attributeName="stroke-opacity" values="0.5;0.1;0.5" dur="3s" repeatCount="indefinite" />}
                           </circle>
                           <rect x={hq.x - 2.5} y={hq.y - 2.5} width="5" height="5" fill="#d4773b" transform={`rotate(45 ${hq.x} ${hq.y})`} />
                           <rect x={hq.x - 1.2} y={hq.y - 1.2} width="2.4" height="2.4" fill="white" transform={`rotate(45 ${hq.x} ${hq.y})`} />
@@ -418,23 +501,6 @@ export default function InteractiveAlgeriaMap() {
 
               {/* Bottom bar — refined */}
               <div className="px-5 py-3.5 flex items-center justify-between gap-4 border-t border-white/[0.04] bg-gradient-to-r from-transparent via-white/[0.01] to-transparent">
-                <div className="flex items-center gap-5 flex-wrap">
-                  {Object.entries(sectorColors).map(([sector, s]) => {
-                    const count = hotspots.filter(h => h.sector === sector).length;
-                    if (count === 0) return null;
-                    return (
-                      <button key={sector} type="button"
-                        onClick={() => { const f = hotspots.find(h => h.sector === sector); if (f) { setSectorFilter(sector); setActiveProject(f.id); } }}
-                        className={`group flex items-center gap-1.5 text-[9px] font-mono tracking-[0.18em] uppercase whitespace-nowrap transition-colors ${
-                          sectorFilter === sector ? 'text-white' : 'text-white/40 hover:text-white'
-                        }`}>
-                        <span className="block w-1 h-1 rounded-full shrink-0 transition-all group-hover:w-1.5 group-hover:h-1.5" style={{ backgroundColor: s.dot, opacity: sectorFilter === sector ? 1 : 0.6 }} />
-                        {s.label}
-                        <span className="text-white/20 ml-1">{count}</span>
-                      </button>
-                    );
-                  })}
-                </div>
                 <span className="text-[9px] font-mono text-white/20 tracking-widest uppercase shrink-0">
                   {Math.round(zoom * 100)}%
                 </span>
@@ -444,7 +510,7 @@ export default function InteractiveAlgeriaMap() {
         </ScrollReveal>
 
         {/* Project dossier — large, editorial layout */}
-        <ScrollReveal>
+        <ScrollReveal className="lg:col-span-4 lg:sticky lg:top-24 lg:self-start mobile-map-drawer">
           <AnimatePresence mode="wait">
             <motion.div
               key={selected.id}
@@ -452,12 +518,17 @@ export default function InteractiveAlgeriaMap() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: shouldReduceMotion ? 0 : 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-8 lg:mt-12 grid grid-cols-12 gap-6 lg:gap-10"
+              className="mt-8 lg:mt-0 grid grid-cols-12 gap-6 lg:block"
             >
               {/* Image — 7 cols on lg, full on mobile */}
-              <div className="col-span-12 lg:col-span-7">
+              <div className="col-span-12 lg:col-span-12">
                 <div className="relative aspect-[4/3] sm:aspect-[16/10] rounded-2xl overflow-hidden bg-[#040c14] border border-white/[0.04]">
-                  <Image src={selected.image} alt={selected.name} fill className="object-cover" priority />
+                  <Image
+                    src={OFFICIAL_PHOTO_PROJECTS.has(selected.id) ? selected.image : selectedPlaceholder}
+                    alt={OFFICIAL_PHOTO_PROJECTS.has(selected.id) ? selected.name : `${selected.name} — official photo pending`}
+                    fill
+                    className="object-cover"
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#08090b] via-transparent to-transparent" />
                   <div className="absolute top-4 left-4 right-4 flex items-start justify-between gap-2">
                     <span className="text-[9px] font-mono tracking-[0.2em] text-white/60 uppercase">
@@ -471,7 +542,7 @@ export default function InteractiveAlgeriaMap() {
               </div>
 
               {/* Text — 5 cols on lg, full on mobile */}
-              <div className="col-span-12 lg:col-span-5 flex flex-col justify-between space-y-6 lg:space-y-0">
+              <div className="col-span-12 lg:col-span-12 flex flex-col justify-between space-y-6 lg:space-y-5">
 
                 <div className="space-y-5">
                   <div className="flex items-center gap-3 pb-4 border-b border-white/[0.06]">
@@ -505,9 +576,17 @@ export default function InteractiveAlgeriaMap() {
                     </span>
                   </div>
                   <button
-                    onClick={() => setActiveProject(filteredHotspots[(selectedIdx + 1) % filteredHotspots.length].id)}
+                    type="button"
+                    onClick={() => {
+                      if (OFFICIAL_PHOTO_PROJECTS.has(selected.id)) {
+                        window.dispatchEvent(new CustomEvent('tamma:open-project', { detail: { id: selected.id } }));
+                        document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      } else {
+                        setMapDossierOpen(true);
+                      }
+                    }}
                     className="group flex items-center gap-2 px-5 py-3 rounded-full bg-white text-[#08090b] text-xs font-semibold tracking-wider uppercase hover:bg-[#d4773b] hover:text-white transition-all">
-                    <span>{language === 'fr' ? 'Dossier' : 'Dossier'}</span>
+                    <span>{language === 'fr' ? 'Voir le dossier' : language === 'en' ? 'View dossier' : 'عرض الملف'}</span>
                     <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                   </button>
                 </div>
@@ -515,8 +594,118 @@ export default function InteractiveAlgeriaMap() {
             </motion.div>
           </AnimatePresence>
         </ScrollReveal>
+        </div>
 
       </div>
+
+      <AnimatePresence>
+        {mapDossierOpen && !OFFICIAL_PHOTO_PROJECTS.has(selected.id) && (
+          <motion.div
+            className="fixed inset-0 z-[70] flex items-center justify-center bg-black/75 p-4 sm:p-6"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="map-dossier-title"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setMapDossierOpen(false)}
+          >
+            <motion.article
+              className="relative max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-2xl bg-white text-[var(--color-ink)] shadow-2xl"
+              initial={{ y: 24, scale: 0.98 }}
+              animate={{ y: 0, scale: 1 }}
+              exit={{ y: 12, scale: 0.98 }}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[rgba(10,12,13,0.06)] bg-white/95 px-6 py-4 backdrop-blur-md sm:px-8">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="rounded-full bg-[var(--color-accent)] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white">
+                    {sectorColors[selected.sector]?.label || selected.sector}
+                  </span>
+                  <span className="text-sm font-medium text-[var(--color-mist)]">
+                    {language === 'fr' ? 'Projet' : language === 'en' ? 'Project' : 'المشروع'} {selected.num}
+                  </span>
+                  <span className="hidden text-[10px] font-mono tracking-wider text-[var(--color-mist)] sm:block">{selected.year}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setMapDossierOpen(false)}
+                  aria-label={language === 'fr' ? 'Fermer le dossier' : language === 'en' ? 'Close dossier' : 'إغلاق الملف'}
+                  className="rounded-full p-2 transition-colors hover:bg-[var(--color-paper)]"
+                >
+                  <X className="h-5 w-5 text-[var(--color-graphite)]" />
+                </button>
+              </div>
+
+              <div className="grid gap-8 p-6 sm:p-10 lg:grid-cols-[1.12fr_0.88fr] lg:gap-x-10 lg:p-12">
+                <div className="relative flex min-h-[270px] items-center justify-center overflow-hidden rounded-2xl bg-[#0a0e12] p-8 text-center lg:sticky lg:top-24 lg:h-[390px] lg:self-start">
+                  <img src={selectedPlaceholder} alt="" className="absolute inset-0 h-full w-full object-cover opacity-90" />
+                  <div className="absolute inset-0 bg-[#08111d]/25" />
+                </div>
+
+                <motion.div
+                  className="space-y-7 lg:pt-1"
+                  initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: shouldReduceMotion ? 0 : 0.28 }}
+                >
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] font-mono font-semibold uppercase tracking-[0.16em] text-[var(--color-mist)]">
+                      <span>{selected.client}</span><span className="h-1 w-1 rounded-full bg-[var(--color-accent)]" />
+                      <span>{selected.location}</span><span className="h-1 w-1 rounded-full bg-[var(--color-accent)]" />
+                      <span>{selected.year}</span>
+                    </div>
+                    <h2 id="map-dossier-title" className="display-md text-[var(--color-ink)]">
+                      {language === 'en' ? selected.nameEn : language === 'ar' ? selected.nameEn : selected.name}
+                    </h2>
+                    <div className="flex items-center gap-2 text-sm text-[var(--color-graphite)]">
+                      <MapPin className="h-4 w-4 text-[var(--color-accent)]" />
+                      <span>{language === 'fr' ? 'Projet cartographique pour' : language === 'en' ? 'Mapped project for' : 'مشروع على الخريطة لصالح'} <strong className="font-semibold text-[var(--color-ink)]">{selected.client}</strong></span>
+                    </div>
+                  </div>
+
+                  <p className="text-base leading-[1.7] text-[var(--color-graphite)] lg:text-lg">
+                    {language === 'en' ? selected.scopeEn : selected.scope}
+                  </p>
+
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-5 border-y border-[rgba(10,12,13,0.1)] py-5">
+                    {[
+                      { label: language === 'fr' ? 'Année' : language === 'en' ? 'Year' : 'السنة', value: selected.year },
+                      { label: language === 'fr' ? 'Secteur' : language === 'en' ? 'Sector' : 'القطاع', value: selected.sector },
+                      { label: language === 'fr' ? 'Localisation' : language === 'en' ? 'Location' : 'الموقع', value: selected.location },
+                      { label: 'Dossier', value: `MAP/${selected.year}-${selected.num}` },
+                    ].map((item) => (
+                      <div key={item.label}><span className="mb-1 block text-[9px] font-mono uppercase tracking-widest text-[var(--color-mist)]">{item.label}</span><span className="block text-sm font-semibold text-[var(--color-ink)]">{item.value}</span></div>
+                    ))}
+                  </div>
+
+                  <div className="space-y-4">
+                    <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--color-mist)]">
+                      {language === 'fr' ? 'Périmètre des travaux' : language === 'en' ? 'Scope of works' : 'نطاق الأعمال'}
+                    </h3>
+                    <div className="flex items-start gap-3 text-[var(--color-charcoal)]">
+                      <div className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent)]" />
+                      <span className="text-sm leading-relaxed">{language === 'en' ? selected.scopeEn : selected.scope}</span>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              <div className="border-t border-[rgba(10,12,13,0.06)] bg-white/95 px-6 py-4 sm:px-8">
+                <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+                  <p className="text-center text-sm text-[var(--color-mist)] sm:text-left">
+                    {language === 'fr' ? 'Dossier cartographique — photographie officielle en attente.' : language === 'en' ? 'Map dossier — official photography pending.' : 'ملف الخريطة — الصورة الرسمية قيد الانتظار.'}
+                  </p>
+                  <a href="#contact-form" onClick={() => setMapDossierOpen(false)} className="btn-premium shrink-0 text-xs">
+                    <span>{language === 'fr' ? 'Discuter d’un projet similaire' : language === 'en' ? 'Discuss similar project' : 'ناقش مشروعاً مماثلاً'}</span>
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                  </a>
+                </div>
+              </div>
+            </motion.article>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

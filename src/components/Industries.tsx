@@ -141,7 +141,7 @@ export default function Industries() {
                   className="shrink-0 px-3"
                   style={{ width: `${100 / slidesPerView}%` }}
                 >
-                  <article className="card group overflow-hidden h-full flex flex-col">
+                  <article className="card editorial-interactive group overflow-hidden h-full flex flex-col">
                     {/* Image */}
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <Image src={ind.image} alt={ind.name} fill className={`object-cover ${shouldReduceMotion ? '' : 'transition-transform duration-700 group-hover:scale-105'}`} />

@@ -12,42 +12,48 @@ import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 import PageIndicator from '@/components/PageIndicator';
 import ReadingProgress from '@/components/ReadingProgress';
-import ScrollToTop from '@/components/ScrollToTop';
 import SectionBackdrop from '@/components/SectionBackdrop';
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'SARL TAMMA SERVICES',
+  alternateName: 'TAMMA EPC Solutions',
+  url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3014',
+  logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3014'}/images/tamma-logo-dark.png`,
+  description: 'Entreprise algérienne d’ingénierie et de construction EPC pour les infrastructures d’énergie, pétrole et gaz.',
+  areaServed: {
+    '@type': 'Country',
+    name: 'Algeria',
+  },
+  knowsAbout: [
+    'Engineering, procurement and construction',
+    'Electrical infrastructure',
+    'Oil and gas infrastructure',
+    'Civil engineering',
+  ],
+};
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-[var(--color-paper)] text-[var(--color-charcoal)] antialiased selection:bg-[var(--color-ink)] selection:text-[var(--color-paper)] overflow-x-hidden">
+    <main id="main-content" className="min-h-screen bg-[var(--color-paper)] text-[var(--color-charcoal)] antialiased selection:bg-[var(--color-ink)] selection:text-[var(--color-paper)] overflow-x-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
       <SectionBackdrop />
       <Navbar />
       <ReadingProgress />
       <PageIndicator />
-      <ScrollToTop />
       <Hero />
       <Clients />
-      {/* Diagonal divider: Hero/Clients (light) → About (light) */}
-      <div className="h-12 lg:h-20 bg-[var(--color-paper)]" />
       <About />
-      {/* Diagonal: About → Industries */}
-      <div className="h-10 lg:h-16 bg-[var(--color-paper)]" />
       <Industries />
-      {/* Diagonal: Industries → Value Chain */}
-      <div className="h-10 lg:h-16 bg-[var(--color-cream)]" />
       <EPCValueChain />
-      {/* Diagonal: Value Chain → Portfolio */}
-      <div className="h-10 lg:h-16 bg-[var(--color-cream)]" />
       <Portfolio />
-      {/* Diagonal: Portfolio → Map (dark) */}
-      <div className="h-8 lg:h-14 bg-[var(--color-midnight)]" />
       <InteractiveAlgeriaMap />
-      {/* Diagonal: Map → Specs (dark) */}
-      <div className="h-8 lg:h-14 bg-[var(--color-midnight)]" />
       <SpecsTable />
-      {/* Diagonal: Specs → QHSE (dark) */}
-      <div className="h-8 lg:h-14 bg-[var(--color-midnight)]" />
       <QHSE />
-      {/* Diagonal: QHSE → Contact (light) */}
-      <div className="h-8 lg:h-14 bg-[var(--color-paper)]" />
       <ContactSection />
       <Footer />
     </main>

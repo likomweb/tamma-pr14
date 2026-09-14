@@ -12,6 +12,7 @@ export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const shouldReduceMotion = useReducedMotion();
   const [videoReady, setVideoReady] = useState(false);
+  const [videoStarted, setVideoStarted] = useState(false);
 
   // Only render video after mount — prevents poster image flash on refresh
   useEffect(() => {
@@ -80,6 +81,13 @@ export default function Hero() {
 
       {/* Full-bleed hero video with parallax */}
       <div className="absolute inset-0 overflow-hidden bg-[#0a0e12]">
+        <div
+          aria-hidden="true"
+          className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 ${
+            videoStarted ? 'opacity-0' : 'opacity-100'
+          }`}
+          style={{ backgroundImage: 'url("/images/hero-video-poster.jpg")' }}
+        />
         {videoReady && (
           <motion.video
             autoPlay
@@ -87,7 +95,10 @@ export default function Hero() {
             muted
             playsInline
             preload="auto"
-            className="absolute inset-0 w-full h-full object-cover object-center"
+            onPlaying={() => setVideoStarted(true)}
+            className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700 ${
+              videoStarted ? 'opacity-100' : 'opacity-0'
+            }`}
             style={{
               y: imageY,
               scale: imageScale,

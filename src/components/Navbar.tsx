@@ -7,6 +7,7 @@ import { ArrowUpRight, Menu, X, ChevronDown, Globe } from 'lucide-react';
 
 export default function Navbar() {
   const { language, setLanguage } = useLanguage();
+  const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
   const [atTop, setAtTop] = useState(true);
@@ -15,6 +16,13 @@ export default function Navbar() {
   const [langOpenDesktop, setLangOpenDesktop] = useState(false);
   const langDropdownRef = useRef<HTMLDivElement>(null);
   const langDropdownRefDesktop = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuTouchStart = useRef<number | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const update = useCallback(() => {
     const sections = ['about', 'industries', 'epc', 'projects', 'specs', 'qhse', 'contact'];
@@ -39,24 +47,20 @@ export default function Navbar() {
 
   useEffect(() => {
     let rafId: number | null = null;
-    let lastRun = 0;
-    const THROTTLE_MS = 50; // 20fps updates for navbar state
 
     const handleScroll = () => {
-      const now = performance.now();
       if (rafId !== null) return; // already scheduled
-      if (now - lastRun < THROTTLE_MS) return; // throttle
-      lastRun = now;
       rafId = requestAnimationFrame(() => {
         update();
         rafId = null;
       });
     };
 
-    update();
+    const initialFrame = requestAnimationFrame(update);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      cancelAnimationFrame(initialFrame);
       if (rafId !== null) cancelAnimationFrame(rafId);
     };
   }, [update]);
@@ -73,11 +77,43 @@ export default function Navbar() {
   // Close menu on Escape key
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMenuOpen(false);
+      if (e.key === 'Escape') {
+        setMenuOpen(false);
+        return;
+      }
+      if (e.key !== 'Tab' || !menuOpen || !mobileMenuRef.current) return;
+      const focusable = mobileMenuRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled])'
+      );
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, []);
+  }, [menuOpen]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    const firstFocusable = mobileMenuRef.current?.querySelector<HTMLElement>('a[href], button:not([disabled])');
+    firstFocusable?.focus();
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      menuButtonRef.current?.focus();
+    };
+  }, [menuOpen]);
 
   // Close language dropdowns on outside click
   useEffect(() => {
@@ -123,7 +159,8 @@ export default function Navbar() {
       menuClose: 'إغلاق',
     },
   };
-  const t = labels[language] || labels.fr;
+  const displayLanguage = mounted ? language : 'fr';
+  const t = labels[displayLanguage] || labels.fr;
 
   const langLabels = {
     fr: 'FR', en: 'EN', ar: 'AR',
@@ -131,6 +168,7 @@ export default function Navbar() {
 
   return (
     <>
+      <a href="#main-content" className="skip-link">Skip to content</a>
       <header className="fixed top-0 left-0 right-0 z-50">
         <nav
           className={`w-full transition-all duration-500 ${
@@ -145,26 +183,24 @@ export default function Navbar() {
 
             {/* Logo */}
             <a href="#" className="flex items-center group z-50 relative">
-              <div className="relative h-9 sm:h-10 w-auto shrink-0 transition-opacity duration-500">
+              <div className="relative h-12 sm:h-13 w-auto shrink-0 transition-opacity duration-500">
                 <Image
                   src="/images/tamma-logo-light.png?v=2"
                   alt="SARL TAMMA"
                   width={180}
                   height={40}
-                  className={`h-9 sm:h-10 w-auto object-contain transition-opacity duration-500 ${
+                  className={`h-12 sm:h-13 w-auto object-contain transition-opacity duration-500 ${
                     atTop && !scrolled && !menuOpen ? 'opacity-100' : 'opacity-0'
                   }`}
-                  priority
                 />
                 <Image
                   src="/images/tamma-logo-dark.png"
                   alt="SARL TAMMA"
                   width={180}
                   height={40}
-                  className={`h-9 sm:h-10 w-auto object-contain absolute top-0 left-0 transition-opacity duration-500 ${
+                  className={`h-12 sm:h-13 w-auto object-contain absolute top-0 left-0 transition-opacity duration-500 ${
                     atTop && !scrolled && !menuOpen ? 'opacity-0' : 'opacity-100'
                   }`}
-                  priority
                 />
               </div>
             </a>
@@ -177,6 +213,7 @@ export default function Navbar() {
                   <a
                     key={link.id}
                     href={`#${link.id}`}
+                    aria-current={isActive ? 'page' : undefined}
                     className={`nav-link relative px-4 py-2 text-[13px] font-medium tracking-[0.01em] transition-all duration-300 rounded-md ${
                       isActive
                         ? atTop ? 'text-white is-active' : 'text-[var(--color-ink)] is-active'
@@ -185,7 +222,7 @@ export default function Navbar() {
                           : 'text-[var(--color-graphite)] hover:text-[var(--color-ink)]'
                     }`}
                   >
-                    {t[link.id as keyof typeof t]}
+                    <span>{t[link.id as keyof typeof t]}</span>
                   </a>
                 );
               })}
@@ -205,7 +242,7 @@ export default function Navbar() {
                   }`}
                 >
                   <Globe className="w-3.5 h-3.5" />
-                  <span>{langLabels[language].toUpperCase()}</span>
+                  <span>{langLabels[displayLanguage].toUpperCase()}</span>
                   <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${langOpenDesktop ? 'rotate-180' : ''}`} />
                 </button>
                 {langOpenDesktop && (
@@ -218,7 +255,7 @@ export default function Navbar() {
                         type="button"
                         onClick={() => { setLanguage(lang); setLangOpenDesktop(false); }}
                         className={`flex items-center gap-2 w-full px-4 py-2.5 text-[11px] font-bold tracking-wider uppercase transition-colors duration-150 ${
-                          language === lang
+                          displayLanguage === lang
                             ? atTop
                               ? 'bg-white/10 text-white'
                               : 'bg-[var(--color-paper)] text-[var(--color-ink)]'
@@ -228,7 +265,7 @@ export default function Navbar() {
                         }`}
                       >
                         <span>{langLabels[lang]}</span>
-                        {language === lang && <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]" />}
+                        {displayLanguage === lang && <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]" />}
                       </button>
                     ))}
                   </div>
@@ -260,7 +297,7 @@ export default function Navbar() {
                   }`}
                 >
                   <Globe className="w-3.5 h-3.5" />
-                  <span>{langLabels[language].toUpperCase()}</span>
+                  <span>{langLabels[displayLanguage].toUpperCase()}</span>
                   <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${langOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {langOpen && (
@@ -273,7 +310,7 @@ export default function Navbar() {
                         type="button"
                         onClick={() => { setLanguage(lang); setLangOpen(false); }}
                         className={`flex items-center gap-2 w-full px-4 py-2.5 text-[11px] font-bold tracking-wider uppercase transition-colors duration-150 ${
-                          language === lang
+                          displayLanguage === lang
                             ? atTop && !menuOpen
                               ? 'bg-white/10 text-white'
                               : 'bg-[var(--color-paper)] text-[var(--color-ink)]'
@@ -283,7 +320,7 @@ export default function Navbar() {
                         }`}
                       >
                         <span>{langLabels[lang]}</span>
-                        {language === lang && <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]" />}
+                        {displayLanguage === lang && <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]" />}
                       </button>
                     ))}
                   </div>
@@ -293,8 +330,11 @@ export default function Navbar() {
               {/* Hamburger / Close button */}
               <button
                 type="button"
+                ref={menuButtonRef}
                 onClick={() => setMenuOpen(!menuOpen)}
                 aria-label={menuOpen ? t.menuClose : 'Menu'}
+                aria-expanded={menuOpen}
+                aria-controls="mobile-navigation"
                 className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors duration-300 ${
                   atTop && !menuOpen
                     ? 'text-white hover:bg-white/10'
@@ -310,7 +350,18 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {menuOpen && (
-          <div className="fixed inset-0 top-[60px] bg-white z-40 overflow-y-auto lg:hidden">
+          <div
+            id="mobile-navigation"
+            ref={mobileMenuRef}
+            className="fixed inset-0 top-[60px] bg-white z-40 overflow-y-auto lg:hidden"
+            role="dialog"
+            aria-modal="true"
+            onTouchStart={(event) => { menuTouchStart.current = event.touches[0].clientX; }}
+            onTouchEnd={(event) => {
+              if (menuTouchStart.current !== null && menuTouchStart.current - event.changedTouches[0].clientX < -70) closeMenu();
+              menuTouchStart.current = null;
+            }}
+          >
             <div className="container-editorial pb-12 flex flex-col">
               {/* Nav links */}
               <nav className="flex-1 space-y-1">
@@ -346,22 +397,6 @@ export default function Navbar() {
                   {t.cta}
                   <ArrowUpRight className="w-4 h-4" />
                 </a>
-                <div className="flex items-center justify-center gap-1">
-                  {(['fr', 'en', 'ar'] as Language[]).map((lang) => (
-                    <button
-                      key={lang}
-                      type="button"
-                      onClick={() => { setLanguage(lang); }}
-                      className={`px-4 py-2 text-sm font-bold tracking-wider uppercase rounded-full transition-all duration-300 ${
-                        language === lang
-                          ? 'bg-[var(--color-ink)] text-white'
-                          : 'text-[var(--color-mist)] hover:text-[var(--color-ink)]'
-                      }`}
-                    >
-                      {langLabels[lang]}
-                    </button>
-                  ))}
-                </div>
               </div>
             </div>
           </div>

@@ -4,7 +4,7 @@ import React from 'react';
 import { useLanguage } from './LanguageContext';
 import ContactForm from './ContactForm';
 import ScrollReveal from './ScrollReveal';
-import { ArrowUpRight, MapPin, Phone, Mail } from 'lucide-react';
+import { ArrowUpRight, MapPin, Phone, Mail, MessageCircle } from 'lucide-react';
 
 export default function ContactSection() {
   const { language } = useLanguage();
@@ -80,7 +80,7 @@ export default function ContactSection() {
 
           <ScrollReveal className="lg:col-span-5 space-y-6">
 
-            <div className="card p-7 lg:p-8 space-y-7">
+            <div className="card editorial-interactive p-7 lg:p-8 space-y-7">
               <h3 className="text-[10px] font-bold tracking-[0.22em] text-[var(--color-mist)] uppercase">
                 {c.hubsTitle}
               </h3>
@@ -111,7 +111,7 @@ export default function ContactSection() {
               </div>
             </div>
 
-            <div className="card p-7 lg:p-8 space-y-4">
+            <div className="card editorial-interactive p-7 lg:p-8 space-y-4">
               <h4 className="text-[10px] font-bold tracking-[0.22em] text-[var(--color-accent)] uppercase">
                 {c.directChannel}
               </h4>
@@ -134,6 +134,18 @@ export default function ContactSection() {
                     <Phone className="w-4 h-4" />
                   </div>
                   <span className="font-semibold text-sm">{c.directPhone}</span>
+                  <ArrowUpRight className="w-4 h-4 ml-auto opacity-50 group-hover:opacity-100" />
+                </a>
+                <a
+                  href="https://wa.me/213661851385"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-3 text-[var(--color-ink)] hover:text-[var(--color-accent)] transition-colors group"
+                >
+                  <div className="w-9 h-9 rounded-lg bg-[var(--color-paper)] flex items-center justify-center group-hover:bg-[var(--color-accent)] group-hover:text-white transition-colors">
+                    <MessageCircle className="w-4 h-4" />
+                  </div>
+                  <span className="font-semibold text-sm">{language === 'fr' ? 'WhatsApp direct' : language === 'en' ? 'Direct WhatsApp' : 'واتساب مباشر'}</span>
                   <ArrowUpRight className="w-4 h-4 ml-auto opacity-50 group-hover:opacity-100" />
                 </a>
               </div>

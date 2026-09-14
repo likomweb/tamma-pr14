@@ -196,7 +196,24 @@ export default function SpecsTable() {
   };
 
   const t = content[language] || content.fr;
-
+  const capabilityGroups = {
+    fr: [
+      { title: 'Construire', label: '01', intro: 'Des moyens réunis pour préparer et bâtir les infrastructures critiques.', indices: [0, 1], tone: 'bg-[#1b1b1e]/90 border-white/[0.1]' },
+      { title: 'Connecter', label: '02', intro: 'Des réseaux et équipements pour relier les territoires avec précision.', indices: [2, 3], tone: 'bg-[#1b2022]/90 border-sky-100/[0.1]' },
+      { title: 'Soutenir', label: '03', intro: 'Des ressources de test, de transport et de vie pour rester autonome.', indices: [4, 5], tone: 'bg-[#201d1b]/90 border-orange-100/[0.1]' },
+    ],
+    en: [
+      { title: 'Build', label: '01', intro: 'Integrated resources for preparing and building critical infrastructure.', indices: [0, 1], tone: 'bg-[#1b1b1e]/90 border-white/[0.1]' },
+      { title: 'Connect', label: '02', intro: 'Networks and equipment that link territories with precision.', indices: [2, 3], tone: 'bg-[#1b2022]/90 border-sky-100/[0.1]' },
+      { title: 'Sustain', label: '03', intro: 'Testing, transport, and site resources for operational autonomy.', indices: [4, 5], tone: 'bg-[#201d1b]/90 border-orange-100/[0.1]' },
+    ],
+    ar: [
+      { title: 'البناء', label: '01', intro: 'موارد متكاملة لإعداد وإنجاز البنى التحتية الحيوية.', indices: [0, 1], tone: 'bg-[#1b1b1e]/90 border-white/[0.1]' },
+      { title: 'الربط', label: '02', intro: 'شبكات ومعدات لربط المناطق بدقة.', indices: [2, 3], tone: 'bg-[#1b2022]/90 border-sky-100/[0.1]' },
+      { title: 'الدعم', label: '03', intro: 'اختبارات ونقل وموارد ميدانية لضمان الاستقلالية التشغيلية.', indices: [4, 5], tone: 'bg-[#201d1b]/90 border-orange-100/[0.1]' },
+    ],
+  };
+  const groups = capabilityGroups[language] || capabilityGroups.fr;
   return (
     <section id="specs" className="bg-[var(--color-midnight)] text-white relative section-pad">
       <div className="container-editorial relative z-10">
@@ -212,7 +229,7 @@ export default function SpecsTable() {
               <h2 className="display-lg text-white" dangerouslySetInnerHTML={{ __html: t.title }} />
             </div>
             <div className="lg:col-span-4 lg:col-start-9 flex items-end">
-              <p className="body-lg text-white/60">{t.subtitle}</p>
+              <p className="body-lg" style={{ color: 'rgba(255,255,255,0.35)' }}>{t.subtitle}</p>
             </div>
           </div>
         </ScrollReveal>
@@ -221,9 +238,7 @@ export default function SpecsTable() {
         <ScrollReveal>
           <div className="mb-6 lg:mb-8">
             <div className="flex items-center gap-3 mb-6">
-              <span className="text-[10px] font-bold tracking-[0.2em] text-white/80 uppercase">
-                {t.capabilitiesHead}
-              </span>
+              <span className="text-[10px] font-bold tracking-[0.2em] text-white/80 uppercase">{t.capabilitiesHead}</span>
               <div className="flex-1 h-px bg-white/10" />
               <span className="text-[9px] font-mono tracking-widest text-white/40 uppercase">06 capacités</span>
             </div>
@@ -231,75 +246,43 @@ export default function SpecsTable() {
               {t.capabilities.map((cap, idx) => (
                 <div key={idx} className="p-4 sm:p-5 lg:p-6 rounded-2xl bg-white/[0.04] backdrop-blur-md border border-white/[0.06] hover:bg-white/[0.06] transition-colors">
                   <div className="flex items-baseline gap-1.5 flex-wrap">
-                    <span className="text-lg sm:text-xl lg:text-3xl font-display font-medium text-white tracking-[-0.02em] leading-none">
-                      {cap.value}
-                    </span>
-                    <span className="text-[9px] sm:text-[10px] font-mono text-[var(--color-rust)] tracking-wider uppercase">
-                      {cap.unit}
-                    </span>
+                    <span className="text-lg sm:text-xl lg:text-3xl font-display font-medium text-white tracking-[-0.02em] leading-none">{cap.value}</span>
+                    <span className="text-[9px] sm:text-[10px] font-mono text-[var(--color-rust)] tracking-wider uppercase">{cap.unit}</span>
                   </div>
-                  <p className="text-[9px] sm:text-[10px] text-white/55 leading-[1.5] tracking-wide mt-2 sm:mt-3">
-                    {cap.label}
-                  </p>
+                  <p className="text-[9px] sm:text-[10px] text-white/55 leading-[1.5] tracking-wide mt-2 sm:mt-3">{cap.label}</p>
                 </div>
               ))}
             </div>
           </div>
         </ScrollReveal>
 
-        {/* Detailed inventory — 6 domain cards */}
+        {/* Integrated capability groups */}
         <ScrollReveal>
-          <div className="space-y-4">
-            {t.domains.map((d) => {
-              const Icon = d.icon;
-              return (
-                <div key={d.num} className="rounded-2xl bg-white/[0.03] backdrop-blur-md border border-white/[0.06] overflow-hidden hover:bg-white/[0.05] transition-colors">
-                  <div className="grid grid-cols-12 gap-0">
-                    <div className="col-span-12 lg:col-span-3 p-6 lg:p-7 flex lg:flex-col gap-4 lg:gap-4 border-b lg:border-b-0 lg:border-r border-white/[0.06]">
-                      <div className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                        <Icon className="w-5 h-5 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <span className="text-[9px] font-mono text-white/40 tracking-widest uppercase">Dom. {d.num}</span>
-                        <h3 className="text-base lg:text-lg font-display font-semibold text-white leading-[1.2] mt-1">
-                          {d.title}
-                        </h3>
-                        <p className="text-[10px] font-mono text-[var(--color-rust)] tracking-wider uppercase mt-2">
-                          {d.total}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="col-span-12 lg:col-span-6 p-6 lg:p-7 border-b lg:border-b-0 lg:border-r border-white/[0.06]">
-                      <div className="space-y-0">
-                        {d.items.map((item, i) => (
-                          <div key={i} className={`flex flex-col gap-1.5 sm:grid sm:grid-cols-[2rem_1fr_8rem] sm:gap-3 py-2.5 ${i > 0 ? 'border-t border-white/[0.05]' : ''}`}>
-                            <span className="font-mono text-[12px] font-bold text-[var(--color-rust)] tracking-wider">
-                              {item.qty}
-                            </span>
-                            <span className="text-[13px] text-white leading-[1.4]">
-                              {item.label}
-                            </span>
-                            <span className="text-[11px] text-white/55 leading-[1.5] sm:text-right">
-                              {item.spec}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="col-span-12 lg:col-span-3 p-6 lg:p-7 bg-[rgba(184,92,46,0.06)]">
-                      <p className="text-[9px] font-mono font-bold tracking-[0.18em] text-[var(--color-rust)] uppercase mb-2">
-                        {language === 'fr' ? 'Impact opérationnel' : language === 'en' ? 'Operational impact' : 'التأثير التشغيلي'}
-                      </p>
-                      <p className="text-[12px] text-white/65 leading-[1.6]">
-                        {d.benefit}
-                      </p>
-                    </div>
-                  </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5">
+            {groups.map((group) => (
+              <article key={group.label} className={`group min-h-[360px] rounded-2xl border p-6 sm:p-7 lg:p-8 flex flex-col transition-all duration-300 hover:-translate-y-1 hover:border-white/[0.2] ${group.tone}`}>
+                <div className="flex items-start justify-between">
+                  <span className="text-[10px] font-mono tracking-[0.2em] text-white/40">{group.label}</span>
+                  <span className="text-[10px] font-mono tracking-widest text-white/40 uppercase">{language === 'fr' ? 'Système' : language === 'en' ? 'System' : 'النظام'}</span>
                 </div>
-              );
-            })}
+                <h3 className="mt-12 text-2xl lg:text-3xl font-display font-semibold text-white tracking-[-0.03em]">{group.title}</h3>
+                <span className="mt-5 block h-px w-8 bg-[var(--color-rust)]" />
+                <p className="mt-6 text-sm text-white/60 leading-[1.65]">{group.intro}</p>
+                <div className="mt-auto pt-7 border-t border-white/[0.1] space-y-4">
+                  {group.indices.map((index) => {
+                    const d = t.domains[index];
+                    const Icon = d.icon;
+                    return (
+                      <div key={d.num} className="flex items-center gap-3">
+                        <Icon className="w-4 h-4 shrink-0 text-white/45" />
+                        <span className="text-sm text-white/80">{d.title}</span>
+                        <span className="ml-auto text-[10px] font-mono text-[var(--color-rust)] tracking-wider">{d.total}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </article>
+            ))}
           </div>
         </ScrollReveal>
 

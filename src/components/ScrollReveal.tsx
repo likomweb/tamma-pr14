@@ -22,8 +22,8 @@ export default function ScrollReveal({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 18 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ y: shouldReduceMotion ? 0 : 18 }}
+      whileInView={{ y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
       transition={{
         duration: shouldReduceMotion ? 0.01 : 0.65,
@@ -36,8 +36,8 @@ export default function ScrollReveal({
       {stagger && React.Children.map(children, (child, i) =>
         React.isValidElement(child)
           ? React.cloneElement(child as React.ReactElement<any>, {
-              initial: { opacity: 0, y: shouldReduceMotion ? 0 : 18 },
-              whileInView: { opacity: 1, y: 0 },
+              initial: { y: shouldReduceMotion ? 0 : 18 },
+              whileInView: { y: 0 },
               viewport: { once: true, margin: '-80px' },
               transition: {
                 duration: shouldReduceMotion ? 0.01 : 0.5,

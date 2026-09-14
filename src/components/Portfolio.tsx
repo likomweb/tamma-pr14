@@ -4,8 +4,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { useLanguage } from './LanguageContext';
 import ScrollReveal from './ScrollReveal';
-import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowUpRight, X, MapPin, Building2, ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { ArrowUpRight, X, MapPin, ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Project {
   id: string;
@@ -20,6 +20,7 @@ interface Project {
   description: string;
   descriptionEn: string;
   image: string;
+  gallery: string[];
   scope: string[];
   scopeEn: string[];
 }
@@ -37,7 +38,8 @@ const KEY_PROJECTS: Project[] = [
     year: '2020',
     description: 'Construction du poste électrique 400/220 kV de Larbaa. Génie civil lourd, montage des transformateurs de puissance, mise en place des disjoncteurs THT et raccordement au réseau national.',
     descriptionEn: 'Construction of the 400/220 kV electrical substation in Larbaa. Heavy civil works, power transformer assembly, high-voltage circuit breaker installation and connection to the national grid.',
-    image: '/images/tamma_real/larbaa_full.webp',
+    image: '/images/project-galleries/p1/image-01.webp',
+    gallery: Array.from({ length: 7 }, (_, index) => `/images/project-galleries/p1/image-${String(index + 1).padStart(2, '0')}.webp`),
     scope: ['Génie civil lourd pour transformateurs de puissance', 'Montage électromécanique des travées 400 kV', 'Câblage des armoires de relayage et contrôle-commande', 'Raccordement au réseau national Sonelgaz'],
     scopeEn: ['Heavy civil works for power transformers', 'Electromechanical assembly of 400 kV bays', 'SCADA and relay cabinet wiring', 'Connection to the Sonelgaz national grid'],
   },
@@ -53,25 +55,27 @@ const KEY_PROJECTS: Project[] = [
     year: '2022',
     description: 'Montage spécialisé de l\'appareillage blindé sous enveloppe métallique (GIS Siemens), caniveaux techniques, câblage contrôle-commande et essais diélectriques.',
     descriptionEn: 'Specialized metal-enclosed switchgear assembly (Siemens GIS), technical cable ducts, SCADA wiring and dielectric testing.',
-    image: '/images/tamma_real/eucalyptus_gis.webp',
+    image: '/images/project-galleries/p2/image-01.webp',
+    gallery: Array.from({ length: 4 }, (_, index) => `/images/project-galleries/p2/image-${String(index + 1).padStart(2, '0')}.webp`),
     scope: ['Génie civil du bâtiment blindé GIS', 'Manutention et assemblage des modules Siemens', 'Câblage contrôle-commande', 'Essais diélectriques et mise en service'],
     scopeEn: ['Civil engineering of the GIS building', 'Handling and assembly of Siemens modules', 'SCADA and control-command wiring', 'Dielectric testing and commissioning'],
   },
   {
     id: 'p3',
-    name: 'Poste Blindé GIS 60/10 kV',
-    nameEn: 'GIS Metal-Enclosed Substation 60/10 kV',
-    category: 'Postes Blindés GIS',
-    descriptor: 'Bouzereah · 2023',
-    descriptorEn: 'Bouzereah · 2023',
-    client: 'SONELGAZ ENGINEERING',
-    location: 'BOUZEREAH, W. ALGIERS',
+    name: 'Liaison souterraine 60 kV',
+    nameEn: '60 kV Underground Cable Link',
+    category: 'Électricité HT',
+    descriptor: 'Reghaia · 2023',
+    descriptorEn: 'Reghaia · 2023',
+    client: 'SONELGAZ STOS',
+    location: 'REGHAIA, W. ALGER',
     year: '2023',
-    description: 'Montage sous enveloppe métallique pour poste GIS 60/10 kV, câblage contrôle-commande et essais de mise en service.',
-    descriptionEn: 'Metal-enclosed switchgear assembly for the 60/10 kV GIS substation, SCADA wiring and commissioning tests.',
-    image: '/images/tamma_real/larbaa_switchyard.webp',
-    scope: ['Montage sous enveloppe métallique GIS', 'Câblage contrôle-commande', 'Essais de mise en service'],
-    scopeEn: ['GIS metal-enclosed switchgear assembly', 'SCADA and control-command wiring', 'Commissioning tests'],
+    description: 'Réalisation de la liaison souterraine 60 kV entre Reghaia et Alger, incluant les fouilles, le déroulage des câbles et la mise en service.',
+    descriptionEn: 'Construction of the 60 kV underground link between Reghaia and Algiers, including excavation, cable installation and commissioning.',
+    image: '/images/project-galleries/p3/image-01.webp',
+    gallery: Array.from({ length: 3 }, (_, index) => `/images/project-galleries/p3/image-${String(index + 1).padStart(2, '0')}.webp`),
+    scope: ['Fouilles et terrassements', 'Déroulage et raccordement des câbles', 'Essais électriques et mise en service'],
+    scopeEn: ['Excavation and earthworks', 'Cable installation and connection', 'Electrical testing and commissioning'],
   },
   {
     id: 'p4',
@@ -85,25 +89,27 @@ const KEY_PROJECTS: Project[] = [
     year: '2019',
     description: "Construction du poste injecteur 400/220 kV pour l'évacuation de la centrale thermique. Travaux d'ingénierie civile, fondations des transformateurs et montage électromécanique haute tension.",
     descriptionEn: 'Construction of the 400/220 kV injector substation for power plant evacuation. Civil engineering works, transformer foundations and high-voltage electromechanical assembly.',
-    image: '/images/tamma_real/ain_arnat_full.webp',
+    image: '/images/project-galleries/p4/image-01.webp',
+    gallery: Array.from({ length: 6 }, (_, index) => `/images/project-galleries/p4/image-${String(index + 1).padStart(2, '0')}.webp`),
     scope: ['Ingénierie civile et fondations transformateurs', 'Montage électromécanique haute tension', 'Plateformes d\'évacuation de la centrale thermique', 'Essais et mise en service'],
     scopeEn: ['Civil engineering and transformer foundations', 'High-voltage electromechanical assembly', 'Power plant evacuation platforms', 'Testing and commissioning'],
   },
   {
     id: 'p5',
-    name: 'Poste PACK+ 60/30 kV',
-    nameEn: 'PACK+ Substation 60/30 kV',
-    category: 'Transport HT/MT',
-    descriptor: 'Ain Ouessara · 2021',
-    descriptorEn: 'Ain Ouessara · 2021',
-    client: 'SONELGAZ STOS',
-    location: 'AIN OUESSARA, W. DJELFA',
-    year: '2021',
-    description: "Construction du poste PACK+ 60/30 kV. Génie civil, montage électromécanique et essais. Travaux complétés incluant connexions électriques, installation et traitement d'huile des transformateurs principaux.",
-    descriptionEn: 'Construction of the PACK+ 60/30 kV substation. Civil engineering, electromechanical assembly and testing. Completed works including electrical connections, installation and oil treatment of main transformers.',
-    image: '/images/tamma_real/ain_arnat_switchyard.webp',
-    scope: ['Génie civil du poste', 'Montage électromécanique 60/30 kV', 'Connexions électriques des transformateurs', "Traitement d'huile des transformateurs principaux"],
-    scopeEn: ['Substation civil engineering', '60/30 kV electromechanical assembly', 'Transformer electrical connections', 'Main transformer oil treatment'],
+    name: 'Ouvrage gaz haute pression',
+    nameEn: 'High-Pressure Gas Pipeline',
+    category: 'Hydrocarbures & Gaz',
+    descriptor: 'Adrar · 2022',
+    descriptorEn: 'Adrar · 2022',
+    client: 'SONATRACH',
+    location: 'ADRAR, W. ADRAR',
+    year: '2022',
+    description: "Réalisation d'un ouvrage gaz haute pression de 28 pouces sur 34 km pour l'alimentation de la centrale électrique d'Adrar.",
+    descriptionEn: 'Construction of a 28-inch, 34 km high-pressure gas pipeline supplying the Adrar power plant.',
+    image: '/images/project-galleries/p5/image-01.webp',
+    gallery: Array.from({ length: 3 }, (_, index) => `/images/project-galleries/p5/image-${String(index + 1).padStart(2, '0')}.webp`),
+    scope: ['Terrassement et ouverture de piste', 'Pose et soudage de la conduite', 'Épreuves hydrauliques et mise en service'],
+    scopeEn: ['Earthworks and access tracks', 'Pipeline laying and welding', 'Hydrostatic testing and commissioning'],
   },
   {
     id: 'p6',
@@ -117,9 +123,44 @@ const KEY_PROJECTS: Project[] = [
     year: '2021',
     description: "Construction de la ligne aérienne 400 kV avec coupure à Hadjret Ennouss/Tipaza. Montage et levage des pylônes métalliques, tirage et réglage des câbles conducteurs sous tension mécanique.",
     descriptionEn: 'Construction of the 400 kV overhead line with section break at Hadjret Ennouss/Tipaza. Pylon assembly and lifting, conductor stringing and tensioning under mechanical load.',
-    image: '/images/tamma_real/hadjret_400kv_full.webp',
+    image: '/images/project-galleries/p6/image-01.webp',
+    gallery: Array.from({ length: 2 }, (_, index) => `/images/project-galleries/p6/image-${String(index + 1).padStart(2, '0')}.webp`),
     scope: ['Fouilles, ferraillage et coulage des massifs', "Assemblage et levage des pylônes métalliques", 'Tirage et réglage des câbles conducteurs', "Câble de garde OPGW et raccordement"],
     scopeEn: ['Excavation, rebar and concrete foundations', 'Pylon assembly and lifting', 'Conductor stringing and tensioning', 'OPGW guard cable and connection'],
+  },
+  {
+    id: 'p7',
+    name: 'Usine de production de dolomite',
+    nameEn: 'Dolomite Production Plant',
+    category: 'Construction industrielle EPC',
+    descriptor: "Ain M'lila · 2023",
+    descriptorEn: "Ain M'lila · 2023",
+    client: 'ENCC-SPA',
+    location: "AIN M'LILA, W. OUM EL BOUAGHI",
+    year: '2023',
+    description: "Réalisation clé en main d'une usine de production de dolomite avec charpente métallique, silos et équipements de concassage.",
+    descriptionEn: 'Turnkey construction of a dolomite production plant with steel structures, silos and crushing equipment.',
+    image: '/images/project-galleries/p7/image-01.webp',
+    gallery: Array.from({ length: 4 }, (_, index) => `/images/project-galleries/p7/image-${String(index + 1).padStart(2, '0')}.webp`),
+    scope: ['Génie civil et fondations spéciales', 'Charpente métallique et plateformes', 'Installation des silos et concasseurs'],
+    scopeEn: ['Civil engineering and special foundations', 'Steel structures and platforms', 'Silo and crusher installation'],
+  },
+  {
+    id: 'p8',
+    name: 'Réfection des plateformes workover',
+    nameEn: 'Workover Platform Rehabilitation',
+    category: 'Génie civil pétrolier',
+    descriptor: 'Hassi Messaoud · 2023',
+    descriptorEn: 'Hassi Messaoud · 2023',
+    client: 'SONATRACH DP/HMD',
+    location: 'HASSI MESSAOUD, W. OUARGLA',
+    year: '2023',
+    description: "Réfection des plateformes et pistes d'accès des puits prévus en workover à Hassi Messaoud.",
+    descriptionEn: 'Rehabilitation of well platforms and access tracks for workover operations in Hassi Messaoud.',
+    image: '/images/project-galleries/p8/image-01.webp',
+    gallery: Array.from({ length: 3 }, (_, index) => `/images/project-galleries/p8/image-${String(index + 1).padStart(2, '0')}.webp`),
+    scope: ['Réfection des plateformes de forage', 'Ouverture et nivellement des pistes', 'Préparation des zones de workover'],
+    scopeEn: ['Drilling platform rehabilitation', 'Access track opening and grading', 'Workover area preparation'],
   },
 ];
 
@@ -176,6 +217,10 @@ export default function Portfolio() {
   const shouldReduceMotion = useReducedMotion();
   const [showFullArchive, setShowFullArchive] = useState<boolean>(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [galleryIndex, setGalleryIndex] = useState<number>(0);
+  const [galleryImageLoaded, setGalleryImageLoaded] = useState(false);
+  const [revealedCardId, setRevealedCardId] = useState<string | null>(null);
+  const touchRevealPending = useRef<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [slidesPerView, setSlidesPerView] = useState<number>(1);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -221,9 +266,107 @@ export default function Portfolio() {
   };
 
   const cardWidth = 100 / slidesPerView;
+  const openProject = (project: Project) => {
+    setGalleryIndex(0);
+    setGalleryImageLoaded(false);
+    setSelectedProject(project);
+  };
+
+  const handleProjectCardClick = (event: React.MouseEvent, project: Project) => {
+    if (touchRevealPending.current === project.id) {
+      event.preventDefault();
+      touchRevealPending.current = null;
+      return;
+    }
+    const pointerType = 'pointerType' in event.nativeEvent
+      ? (event.nativeEvent as MouseEvent & { pointerType?: string }).pointerType
+      : undefined;
+    if (pointerType === 'touch' && revealedCardId !== project.id) {
+      event.preventDefault();
+      setRevealedCardId(project.id);
+      return;
+    }
+    openProject(project);
+  };
+
+  const selectedProjectIndex = selectedProject
+    ? KEY_PROJECTS.findIndex((project) => project.id === selectedProject.id)
+    : -1;
+  const previousProject = selectedProjectIndex >= 0
+    ? KEY_PROJECTS[(selectedProjectIndex - 1 + KEY_PROJECTS.length) % KEY_PROJECTS.length]
+    : null;
+  const nextProject = selectedProjectIndex >= 0
+    ? KEY_PROJECTS[(selectedProjectIndex + 1) % KEY_PROJECTS.length]
+    : null;
+  const switchProject = (project: Project | null) => {
+    if (!project) return;
+    setGalleryIndex(0);
+    setGalleryImageLoaded(false);
+    setSelectedProject(project);
+  };
+
+  useEffect(() => {
+    if (!selectedProject) return;
+
+    const html = document.documentElement;
+    const body = document.body;
+    const previousStyles = {
+      htmlOverflow: html.style.overflow,
+      overflow: body.style.overflow,
+    };
+
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+
+    return () => {
+      html.style.overflow = previousStyles.htmlOverflow;
+      body.style.overflow = previousStyles.overflow;
+    };
+  }, [selectedProject]);
+
+  useEffect(() => {
+    if (!selectedProject) return;
+    setGalleryImageLoaded(false);
+  }, [galleryIndex, selectedProject]);
+
+  useEffect(() => {
+    if (!selectedProject) return;
+    const onGalleryKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        setGalleryIndex((index) => (index - 1 + selectedProject.gallery.length) % selectedProject.gallery.length);
+      } else if (e.key === 'ArrowRight') {
+        setGalleryIndex((index) => (index + 1) % selectedProject.gallery.length);
+      } else if (e.key === 'Escape') {
+        setSelectedProject(null);
+      }
+    };
+    window.addEventListener('keydown', onGalleryKey);
+    return () => window.removeEventListener('keydown', onGalleryKey);
+  }, [selectedProject]);
+
+  useEffect(() => {
+    const openProjectFromMap = (event: Event) => {
+      const id = (event as CustomEvent<{ id?: string }>).detail?.id;
+      const portfolioIdByMapId: Record<string, string> = {
+        p8: 'p6',
+        p9: 'p6',
+        p10: 'p3',
+        p14: 'p5',
+        p15: 'p5',
+        p18: 'p5',
+        p19: 'p7',
+        p22: 'p8',
+        p33: 'p6',
+      };
+      const project = KEY_PROJECTS.find((item) => item.id === (id ? portfolioIdByMapId[id] || id : ''));
+      if (project) openProject(project);
+    };
+    window.addEventListener('tamma:open-project', openProjectFromMap);
+    return () => window.removeEventListener('tamma:open-project', openProjectFromMap);
+  }, []);
 
   return (
-    <section id="projects" className="bg-white section-pad">
+    <section id="projects" className="bg-[var(--color-paper)] section-pad">
       <div className="container-editorial">
         <ScrollReveal>
           <div className="grid lg:grid-cols-12 gap-8 mb-8 lg:mb-10">
@@ -232,10 +375,16 @@ export default function Portfolio() {
                 <span className="num">04</span>
                 <span className="name">{language === 'ar' ? 'المشاريع' : language === 'en' ? 'Projects' : 'Realisations'}</span>
               </div>
-              <div className="eyebrow">Nos Realisations</div>
-              <h2 className="display-lg text-[var(--color-ink)]">
-                34 projets documentes.<br />Vingt-cinq ans.
-              </h2>
+              <div className="eyebrow">
+                {language === 'ar' ? 'إنجازاتنا' : language === 'en' ? 'Our Projects' : 'Nos Réalisations'}
+              </div>
+              <h2 className="display-lg text-[var(--color-ink)]" dangerouslySetInnerHTML={{
+                __html: language === 'ar'
+                  ? '34 مشروعاً موثقاً.<br />خمسة وعشرون عاماً.'
+                  : language === 'en'
+                  ? '34 documented projects.<br />Twenty-five years.'
+                  : '34 projets documentés.<br />Vingt-cinq ans.'
+              }} />
             </div>
             <div className="lg:col-span-4 lg:col-start-9 flex items-end">
               <p className="body-lg text-[var(--color-graphite)]">
@@ -262,27 +411,36 @@ export default function Portfolio() {
                 className={`flex${shouldReduceMotion ? '' : ' transition-transform duration-500'}`}
                 style={{ transform: `translateX(-${currentIndex * cardWidth}%)` }}
               >
-                {KEY_PROJECTS.map((p) => (
+                {KEY_PROJECTS.map((p, i) => (
                   <div
                     key={p.id}
                     className="shrink-0 px-3"
                     style={{ width: `${cardWidth}%` }}
                   >
                     <article
-                      onClick={() => setSelectedProject(p)}
-                      className="card group cursor-pointer h-full flex flex-col overflow-hidden"
+                      onClick={(event) => handleProjectCardClick(event, p)}
+                      onTouchStart={() => {
+                        if (revealedCardId !== p.id) {
+                          touchRevealPending.current = p.id;
+                          setRevealedCardId(p.id);
+                        }
+                      }}
+                      className={`card editorial-interactive group cursor-pointer h-full flex flex-col overflow-hidden ${
+                        revealedCardId === p.id ? 'touch-revealed' : ''
+                      }`}
                     >
                       <div className="relative aspect-[4/3] overflow-hidden bg-[#0a0e12]">
                         <Image
                           src={p.image}
                           alt={p.name}
                           fill
+                          sizes="(max-width: 639px) calc(100vw - 80px), (max-width: 1023px) 50vw, 33vw"
                           className={`object-cover${shouldReduceMotion ? '' : ' transition-transform duration-700 group-hover:scale-105'}`}
                         />
                         {/* Hover overlay — subtle zoom hint */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
+                        <div className="touch-reveal-overlay absolute inset-0 bg-gradient-to-t from-black/40 via-black/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
                         {/* Hover preview hint */}
-                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-400">
+                        <div className="touch-reveal-overlay absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-400">
                           <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
                             <ArrowUpRight className="w-5 h-5 text-white" />
                           </div>
@@ -443,11 +601,11 @@ export default function Portfolio() {
       {/* Modal */}
       {selectedProject && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8 bg-[#0a0e12]/85 backdrop-blur-xl"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8 bg-[#0a0e12]/85 backdrop-blur-xl overscroll-contain"
           onClick={() => setSelectedProject(null)}
         >
           <motion.div
-            className="relative w-full max-w-4xl bg-white rounded-2xl overflow-y-auto max-h-[92vh] shadow-2xl"
+            className="relative w-full max-w-4xl bg-white rounded-2xl overflow-y-auto overscroll-contain max-h-[92vh] shadow-2xl"
             onClick={(e) => e.stopPropagation()}
             initial={{ opacity: 0, scale: 0.92, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -476,78 +634,192 @@ export default function Portfolio() {
               </button>
             </div>
 
-            <div className="p-6 sm:p-10 space-y-8">
-              <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-[#0a0e12]">
-                <Image
-                  src={selectedProject.image}
-                  alt={selectedProject.name}
-                  fill
-                  className="object-cover"
-                  priority
+            <div className="p-6 sm:p-10 lg:p-12 space-y-8 lg:grid lg:grid-cols-[1.12fr_0.88fr] lg:gap-x-10 lg:gap-y-0">
+              <div className="relative aspect-[16/9] lg:aspect-auto lg:h-[390px] overflow-hidden rounded-2xl bg-[#0a0e12] lg:sticky lg:top-24 lg:self-start touch-gallery">
+                <AnimatePresence initial={false} mode="sync">
+                  <motion.div
+                    key={selectedProject.gallery[galleryIndex]}
+                    className="absolute inset-0"
+                    initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
+                    transition={{ duration: shouldReduceMotion ? 0 : 0.3, ease: 'easeOut' }}
+                  >
+                    <Image
+                      src={selectedProject.gallery[galleryIndex]}
+                      alt={`${selectedProject.name} - ${galleryIndex + 1}`}
+                      fill
+                      sizes="(max-width: 639px) calc(100vw - 48px), (max-width: 1023px) 80vw, 800px"
+                      className="object-cover"
+                      onLoad={() => setGalleryImageLoaded(true)}
+                    />
+                  </motion.div>
+                </AnimatePresence>
+                <div
+                  aria-hidden="true"
+                  className={`absolute inset-0 bg-[linear-gradient(120deg,#e9e5dd,#f7f5f0,#e9e5dd)] transition-opacity duration-300 ${
+                    galleryImageLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                  }`}
                 />
+                {selectedProject.gallery.length > 1 && [1, -1].map((offset) => {
+                  const adjacentIndex = (galleryIndex + offset + selectedProject.gallery.length) % selectedProject.gallery.length;
+                  return (
+                    <Image
+                      key={`${selectedProject.id}-${adjacentIndex}`}
+                      src={selectedProject.gallery[adjacentIndex]}
+                      alt=""
+                      fill
+                      sizes="(max-width: 1023px) 640px, 800px"
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 opacity-0"
+                    />
+                  );
+                })}
+                {selectedProject.gallery.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setGalleryIndex((index) => (index - 1 + selectedProject.gallery.length) % selectedProject.gallery.length)}
+                      aria-label="Previous project image"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/45 text-white backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-colors"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setGalleryIndex((index) => (index + 1) % selectedProject.gallery.length)}
+                      aria-label="Next project image"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/45 text-white backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-colors"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 rounded-full bg-black/45 px-3 py-2 backdrop-blur-sm">
+                      {selectedProject.gallery.map((image, index) => (
+                        <button
+                          key={image}
+                          type="button"
+                          onClick={() => setGalleryIndex(index)}
+                          aria-label={`View project image ${index + 1}`}
+                          className={`h-1.5 rounded-full transition-all ${index === galleryIndex ? 'w-6 bg-white' : 'w-1.5 bg-white/50 hover:bg-white/80'}`}
+                        />
+                      ))}
+                    </div>
+                    <span className="absolute top-3 right-3 rounded-full bg-black/45 px-3 py-1.5 text-[10px] font-mono text-white backdrop-blur-sm">
+                      {galleryIndex + 1} / {selectedProject.gallery.length}
+                    </span>
+                  </>
+                )}
               </div>
 
-              <div className="space-y-3">
-                <h3 className="display-md text-[var(--color-ink)]">
-                  {language === 'en' ? selectedProject.nameEn : selectedProject.name}
-                </h3>
-                <div className="flex flex-wrap items-center gap-6 text-sm text-[var(--color-graphite)]">
-                  <span className="flex items-center gap-2">
-                    <Building2 className="w-4 h-4 text-[var(--color-accent)]" />
-                    <strong className="font-semibold text-[var(--color-ink)]">{selectedProject.client}</strong>
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-[var(--color-accent)]" />
-                    {selectedProject.location}
-                  </span>
-                </div>
-              </div>
-
-              <p className="text-base lg:text-lg text-[var(--color-graphite)] leading-[1.7]">
-                {language === 'en' ? selectedProject.descriptionEn : selectedProject.description}
-              </p>
-
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                {[
-                  { label: language === 'fr' ? 'Tension' : 'Voltage', value: '400/220 kV' },
-                  { label: language === 'fr' ? 'Annee' : 'Year', value: selectedProject.year },
-                  { label: language === 'fr' ? 'Secteur' : 'Sector', value: selectedProject.category },
-                  { label: language === 'fr' ? 'Dossier' : 'Dossier', value: `PROJ/${selectedProject.year}-${selectedProject.id.replace('p', '').padStart(3, '0')}` },
-                ].map((s, i) => (
-                  <div key={i} className="p-4 bg-[var(--color-paper)] rounded-lg">
-                    <span className="block text-[9px] font-mono tracking-widest text-[var(--color-mist)] uppercase mb-1">{s.label}</span>
-                    <span className="block text-sm font-semibold text-[var(--color-ink)] font-display">{s.value}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="space-y-4">
-                <h4 className="text-[10px] font-bold tracking-[0.2em] text-[var(--color-mist)] uppercase">
-                  {language === 'fr' ? 'Perimetre des Travaux' : 'Scope of Works'}
-                </h4>
+              <motion.div
+                key={selectedProject.id}
+                className="space-y-7 lg:pt-1"
+                initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+              >
                 <div className="space-y-3">
-                  {(language === 'en' ? selectedProject.scopeEn : selectedProject.scope).map((item, idx) => (
-                    <div key={idx} className="flex items-start gap-3 text-[var(--color-charcoal)]">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)] mt-2 shrink-0" />
-                      <span className="text-sm leading-relaxed">{item}</span>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] font-mono font-semibold tracking-[0.16em] text-[var(--color-mist)] uppercase">
+                    <span>{selectedProject.client}</span>
+                    <span className="h-1 w-1 rounded-full bg-[var(--color-accent)]" />
+                    <span>{selectedProject.location}</span>
+                    <span className="h-1 w-1 rounded-full bg-[var(--color-accent)]" />
+                    <span>{selectedProject.year}</span>
+                  </div>
+                  <h3 className="display-md text-[var(--color-ink)]">
+                  {language === 'en' ? selectedProject.nameEn : selectedProject.name}
+                  </h3>
+                  <div className="flex items-center gap-2 text-sm text-[var(--color-graphite)]">
+                    <MapPin className="w-4 h-4 text-[var(--color-accent)]" />
+                    <span>{language === 'fr' ? 'Projet réalisé pour' : 'Project delivered for'} <strong className="font-semibold text-[var(--color-ink)]">{selectedProject.client}</strong></span>
+                  </div>
+                </div>
+
+                <p className="text-base lg:text-lg text-[var(--color-graphite)] leading-[1.7]">
+                  {language === 'en' ? selectedProject.descriptionEn : selectedProject.description}
+                </p>
+
+                <div className="grid grid-cols-2 gap-x-4 gap-y-5 border-y border-[rgba(10,12,13,0.1)] py-5">
+                  {[
+                    { label: language === 'fr' ? 'Tension' : 'Voltage', value: '400/220 kV' },
+                    { label: language === 'fr' ? 'Annee' : 'Year', value: selectedProject.year },
+                    { label: language === 'fr' ? 'Secteur' : 'Sector', value: selectedProject.category },
+                    { label: language === 'fr' ? 'Dossier' : 'Dossier', value: `PROJ/${selectedProject.year}-${selectedProject.id.replace('p', '').padStart(3, '0')}` },
+                  ].map((s, i) => (
+                    <div key={i}>
+                      <span className="block text-[9px] font-mono tracking-widest text-[var(--color-mist)] uppercase mb-1">{s.label}</span>
+                      <span className="block text-sm font-semibold text-[var(--color-ink)] font-display">{s.value}</span>
                     </div>
                   ))}
                 </div>
-              </div>
+
+                <div className="space-y-4">
+                  <h4 className="text-[10px] font-bold tracking-[0.2em] text-[var(--color-mist)] uppercase">
+                    {language === 'fr' ? 'Perimetre des Travaux' : 'Scope of Works'}
+                  </h4>
+                  <div className="space-y-3">
+                    {(language === 'en' ? selectedProject.scopeEn : selectedProject.scope).map((item, idx) => (
+                      <div key={idx} className="flex items-start gap-3 text-[var(--color-charcoal)]">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)] mt-2 shrink-0" />
+                        <span className="text-sm leading-relaxed">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
             </div>
 
-            <div className="sticky bottom-0 bg-white/95 backdrop-blur-md px-6 sm:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[rgba(10,12,13,0.06)]">
-              <p className="text-sm text-[var(--color-mist)] text-center sm:text-left">
-                {language === 'fr' ? 'Projet certifie et receptionne.' : 'Project certified and accepted.'}
-              </p>
-              <a
-                href="#contact-form"
-                onClick={() => setSelectedProject(null)}
-                className="btn-premium text-xs shrink-0"
-              >
-                <span>{language === 'fr' ? 'Discuter d\'un projet similaire' : 'Discuss similar project'}</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </a>
+            <div className="sticky bottom-0 bg-white/95 backdrop-blur-md border-t border-[rgba(10,12,13,0.06)]">
+              <div className="px-6 sm:px-8 py-3 flex items-center justify-between gap-3 border-b border-[rgba(10,12,13,0.06)]">
+                <button
+                  type="button"
+                  onClick={() => switchProject(previousProject)}
+                  className="group flex min-w-0 items-center gap-2 text-left"
+                  aria-label={language === 'fr' ? 'Projet précédent' : 'Previous project'}
+                >
+                  <ChevronLeft className="w-4 h-4 shrink-0 text-[var(--color-accent)] transition-transform group-hover:-translate-x-1" />
+                  <span className="min-w-0">
+                    <span className="block text-[9px] font-mono tracking-[0.16em] text-[var(--color-mist)] uppercase">
+                      {language === 'fr' ? 'Precedent' : 'Previous'}
+                    </span>
+                    <span className="block max-w-[130px] truncate text-xs font-semibold text-[var(--color-ink)]">
+                      {language === 'en' ? previousProject?.nameEn : previousProject?.name}
+                    </span>
+                  </span>
+                </button>
+                <span className="shrink-0 text-[10px] font-mono tracking-widest text-[var(--color-mist)]">
+                  {selectedProjectIndex + 1} / {KEY_PROJECTS.length}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => switchProject(nextProject)}
+                  className="group flex min-w-0 items-center gap-2 text-right"
+                  aria-label={language === 'fr' ? 'Projet suivant' : 'Next project'}
+                >
+                  <span className="min-w-0">
+                    <span className="block text-[9px] font-mono tracking-[0.16em] text-[var(--color-mist)] uppercase">
+                      {language === 'fr' ? 'Suivant' : 'Next'}
+                    </span>
+                    <span className="block max-w-[130px] truncate text-xs font-semibold text-[var(--color-ink)]">
+                      {language === 'en' ? nextProject?.nameEn : nextProject?.name}
+                    </span>
+                  </span>
+                  <ChevronRight className="w-4 h-4 shrink-0 text-[var(--color-accent)] transition-transform group-hover:translate-x-1" />
+                </button>
+              </div>
+              <div className="px-6 sm:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p className="text-sm text-[var(--color-mist)] text-center sm:text-left">
+                  {language === 'fr' ? 'Projet certifie et receptionne.' : 'Project certified and accepted.'}
+                </p>
+                <a
+                  href="#contact-form"
+                  onClick={() => setSelectedProject(null)}
+                  className="btn-premium text-xs shrink-0"
+                >
+                  <span>{language === 'fr' ? 'Discuter d\'un projet similaire' : 'Discuss similar project'}</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
             </div>
           </motion.div>
         </div>

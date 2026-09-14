@@ -3,6 +3,8 @@ import { Plus_Jakarta_Sans, Inter } from 'next/font/google';
 import './globals.css';
 import { LanguageProvider } from '@/components/LanguageContext';
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3014';
+
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   variable: '--font-heading',
@@ -33,6 +35,7 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: 'SARL TAMMA EPC SOLUTIONS | Energy • Oil & Gas Algeria',
   description: 'Leader en ingénierie EPC, conception et réalisation de grands projets d\'infrastructures d\'énergie, pétrole et gaz en Algérie. Catégorie VII, ISO 9001, 14001, 45001.',
   keywords: [
@@ -60,6 +63,28 @@ export const metadata: Metadata = {
     title: 'SARL TAMMA EPC SOLUTIONS | Energy • Oil & Gas Algeria',
     description: 'Catégorie VII — Étude, conception et réalisation de grands projets d\'infrastructures d\'énergie, pétrole et gaz en Algérie.',
     siteName: 'SARL TAMMA SERVICES',
+    url: siteUrl,
+    images: [{
+      url: '/images/context/hero.webp',
+      width: 1200,
+      height: 630,
+      alt: 'SARL TAMMA EPC Solutions — Energy and infrastructure projects in Algeria',
+    }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'SARL TAMMA EPC SOLUTIONS | Energy • Oil & Gas Algeria',
+    description: 'Étude, conception et réalisation de projets EPC d’énergie, pétrole et gaz en Algérie.',
+    images: ['/images/context/hero.webp'],
+  },
+  alternates: {
+    canonical: siteUrl,
+    languages: {
+      'fr-DZ': `${siteUrl}/?lang=fr`,
+      'en-DZ': `${siteUrl}/?lang=en`,
+      'ar-DZ': `${siteUrl}/?lang=ar`,
+      'x-default': `${siteUrl}/?lang=fr`,
+    },
   },
   icons: {
     icon: '/favicon.svg',

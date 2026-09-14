@@ -20,6 +20,18 @@ const contactSchema = z.object({
   honeypot: z.string().optional(),
 });
 
+const MAX_ATTACHMENTS = 5;
+const MAX_ATTACHMENT_SIZE = 10 * 1024 * 1024;
+const ALLOWED_ATTACHMENT_TYPES = new Set([
+  'application/pdf',
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/zip',
+]);
+
 export async function submitContactRequest(formData: FormData) {
   try {
     const rawData = {
@@ -42,6 +54,21 @@ export async function submitContactRequest(formData: FormData) {
     }
 
     const validated = contactSchema.parse(rawData);
+    const files = formData.getAll('attachments').filter((value): value is File => value instanceof File && value.size > 0);
+
+    if (files.length > MAX_ATTACHMENTS) {
+      return { success: false, error: `Vous pouvez joindre au maximum ${MAX_ATTACHMENTS} fichiers.` };
+    }
+
+    for (const file of files) {
+      if (file.size > MAX_ATTACHMENT_SIZE) {
+        return { success: false, error: `Le fichier "${file.name}" dépasse la limite de 10 MB.` };
+      }
+      if (!ALLOWED_ATTACHMENT_TYPES.has(file.type)) {
+        return { success: false, error: `Le type du fichier "${file.name}" n'est pas autorisé.` };
+      }
+    }
+
     const supabase = createAdminClient();
 
     const { data: requestRecord, error: insertError } = await supabase
@@ -70,58 +97,67 @@ export async function submitContactRequest(formData: FormData) {
     }
 
     const requestId = requestRecord.id;
-    const files = formData.getAll('attachments') as File[];
-    const uploadedAttachments: { name: string; path: string; size: number; mime: string }[] = [];
+    const uploadedPaths: string[] = [];
 
     for (const file of files) {
-      if (file && file.size > 0 && file.name) {
-        if (file.size > 10 * 1024 * 1024) continue;
+      const safeFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const storagePath = `${requestId}/${Date.now()}_${safeFileName}`;
+      const fileBuffer = await file.arrayBuffer();
 
-        const safeFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-        const storagePath = `${requestId}/${Date.now()}_${safeFileName}`;
-        const fileBuffer = await file.arrayBuffer();
+      const { error: uploadError } = await supabase.storage
+        .from('customer_attachments')
+        .upload(storagePath, fileBuffer, {
+          contentType: file.type,
+          upsert: false,
+        });
 
-        const { error: uploadError } = await supabase.storage
-          .from('customer_attachments')
-          .upload(storagePath, fileBuffer, {
-            contentType: file.type || 'application/octet-stream',
-            upsert: false,
-          });
-
-        if (!uploadError) {
-          await supabase.from('attachments').insert({
-            request_id: requestId,
-            file_name: file.name,
-            file_path: storagePath,
-            mime_type: file.type || 'application/octet-stream',
-            file_size: file.size,
-          });
-          uploadedAttachments.push({
-            name: file.name,
-            path: storagePath,
-            size: file.size,
-            mime: file.type,
-          });
+      if (uploadError) {
+        if (uploadedPaths.length > 0) {
+          await supabase.storage.from('customer_attachments').remove(uploadedPaths);
         }
+        await supabase.from('contact_requests').delete().eq('id', requestId);
+        throw new Error(`Attachment upload failed for "${file.name}": ${uploadError.message}`);
+      }
+      uploadedPaths.push(storagePath);
+
+      const { error: attachmentInsertError } = await supabase.from('attachments').insert({
+        request_id: requestId,
+        file_name: file.name,
+        file_path: storagePath,
+        mime_type: file.type,
+        file_size: file.size,
+      });
+
+      if (attachmentInsertError) {
+        await supabase.storage.from('customer_attachments').remove([...uploadedPaths, storagePath]);
+        await supabase.from('contact_requests').delete().eq('id', requestId);
+        throw new Error(`Attachment record failed for "${file.name}": ${attachmentInsertError.message}`);
       }
     }
 
-    try {
-      const resendApiKey = process.env.RESEND_API_KEY;
-      const recipientEmail = process.env.NOTIFICATION_EMAIL_TO || 'commercial@tamma-services.dz';
-      const senderEmail = process.env.NOTIFICATION_EMAIL_FROM || 'TAMMA System <onboarding@resend.dev>';
+    const resendApiKey = process.env.RESEND_API_KEY;
+    const recipientEmail = process.env.NOTIFICATION_EMAIL_TO;
+    const senderEmail = process.env.NOTIFICATION_EMAIL_FROM;
 
-      if (resendApiKey && resendApiKey.startsWith('re_')) {
+    if (resendApiKey) {
+      if (!resendApiKey.startsWith('re_') || !recipientEmail || !senderEmail) {
+        console.warn('Resend notification skipped: email configuration is incomplete.');
+      } else {
         const resend = new Resend(resendApiKey);
-        await resend.emails.send({
-          from: senderEmail,
-          to: [recipientEmail],
-          subject: `Nouvelle demande client SARL TAMMA - ${validated.firstName} ${validated.lastName}`,
-          html: `<p>Client: ${validated.firstName} ${validated.lastName}</p><p>Email: ${validated.email}</p><p>Tel: ${validated.phone}</p><p>Service: ${validated.service}</p><p>Message: ${validated.message}</p>`,
-        });
+        try {
+          const { error: emailError } = await resend.emails.send({
+            from: senderEmail,
+            to: [recipientEmail],
+            subject: `Nouvelle demande client SARL TAMMA - ${validated.firstName} ${validated.lastName}`,
+            html: `<p>Client: ${validated.firstName} ${validated.lastName}</p><p>Email: ${validated.email}</p><p>Tel: ${validated.phone}</p><p>Service: ${validated.service}</p><p>Message: ${validated.message}</p>`,
+          });
+          if (emailError) console.warn('Resend notification failed:', emailError);
+        } catch (emailError) {
+          console.warn('Resend notification failed:', emailError);
+        }
       }
-    } catch (emailErr) {
-      console.warn('Resend notification skipped/failed:', emailErr);
+    } else {
+      console.warn('Resend notification skipped: RESEND_API_KEY is not configured.');
     }
 
     return { success: true, id: requestId };

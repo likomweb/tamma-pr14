@@ -39,6 +39,7 @@ export default function CountUp({
       return;
     }
 
+    let animationFrame: number | null = null;
     const animate = () => {
       if (hasAnimated.current && triggerOnce) return;
       const startTime = performance.now();
@@ -49,13 +50,20 @@ export default function CountUp({
         const eased = easeOut(progress);
         setValue(start + (end - start) * eased);
         if (progress < 1) {
-          requestAnimationFrame(tick);
+          animationFrame = requestAnimationFrame(tick);
         } else {
           hasAnimated.current = true;
         }
       };
-      requestAnimationFrame(tick);
+      animationFrame = requestAnimationFrame(tick);
     };
+
+    if (!('IntersectionObserver' in window)) {
+      animate();
+      return () => {
+        if (animationFrame !== null) cancelAnimationFrame(animationFrame);
+      };
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -73,7 +81,15 @@ export default function CountUp({
     );
 
     observer.observe(node);
-    return () => observer.disconnect();
+    const rect = node.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      animate();
+      if (triggerOnce) observer.disconnect();
+    }
+    return () => {
+      observer.disconnect();
+      if (animationFrame !== null) cancelAnimationFrame(animationFrame);
+    };
   }, [end, duration, start, shouldReduceMotion, triggerOnce]);
 
   const display = decimals > 0 ? value.toFixed(decimals) : Math.round(value).toString();

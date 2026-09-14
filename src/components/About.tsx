@@ -230,11 +230,10 @@ export default function About() {
             <div className="lg:col-span-7">
               <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-[16/9]">
                 <Image
-                  src="/images/tamma_real/larbaa_transformer.webp"
+                  src="/images/tamma_real/larbaa_transformer.png"
                   alt="SARL TAMMA — Poste 400/220kV Larbaa"
                   fill
                   className="object-cover"
-                  priority
                 />
               </div>
               <div className="mt-5 flex items-center gap-4">
@@ -281,7 +280,9 @@ export default function About() {
               {pillars.map((pillar) => {
                 const isOpen = expandedPillar === pillar.num;
                 return (
-                  <div key={pillar.num} className={`card p-6 lg:p-8 space-y-4 group relative overflow-hidden transition-colors duration-300 ${
+                  <div
+                    key={pillar.num}
+                    className={`card p-6 lg:p-8 space-y-4 group relative overflow-hidden transition-colors duration-300 ${
                     isOpen ? 'bg-[var(--color-accent-tint)] border border-[var(--color-accent)]/20' : 'hover:bg-[var(--color-cream)]/50'
                   }`}>
                     {/* Background tint on hover */}

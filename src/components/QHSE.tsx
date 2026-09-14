@@ -44,7 +44,7 @@ export default function QHSE() {
         { num: "100", unit: "%", label: "Personnel Habilité Électrique" },
         { num: "12", unit: "/an", label: "Audits Internes Programmés" },
       ],
-      quote: "Nous nous engageons à respecter les exigences légales et réglementaires applicables, à prévenir les nuisances et contaminations, et à fournir les ressources nécessaires à l'amélioration continue de notre système de management de la qualité, santé, sécurité et environnement.",
+      quote: "Conformité, prévention et amélioration continue : notre engagement QHSE.",
       attribution: "La Direction Générale · SARL TAMMA"
     },
     en: {
@@ -82,7 +82,7 @@ export default function QHSE() {
         { num: "100", unit: "%", label: "Electrically Authorized Staff" },
         { num: "12", unit: "/yr", label: "Internal Audits Planned" },
       ],
-      quote: "We commit to complying with applicable legal and regulatory requirements, preventing nuisances and contamination, and providing the necessary resources for the continuous improvement of our quality, health, safety, and environmental management system.",
+      quote: "Compliance, prevention, and continuous improvement: our QHSE commitment.",
       attribution: "General Management · SARL TAMMA"
     },
     ar: {
@@ -99,7 +99,7 @@ export default function QHSE() {
         { num: "100", unit: "٪", label: "موظفون مرخصون" },
         { num: "12", unit: "/سنة", label: "عمليات تدقيق" },
       ],
-      quote: "نلتزم بالامتثال للمتطلبات القانونية والتنظيمية المعمول بها.",
+      quote: "الامتثال والوقاية والتحسين المستمر: التزامنا بنظام QHSE.",
       attribution: "الإدارة العامة · سارل تامة"
     }
   };
@@ -108,7 +108,6 @@ export default function QHSE() {
 
   return (
     <section id="qhse" className="bg-[var(--color-midnight)] text-white relative section-pad">
-
       {/* Section transition — fade from dark QHSE into light Contact section */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-[var(--color-paper)] pointer-events-none" />
       <div className="container-editorial relative z-10">
@@ -124,72 +123,96 @@ export default function QHSE() {
               <h2 className="display-lg text-white" dangerouslySetInnerHTML={{ __html: c.title }} />
             </div>
             <div className="lg:col-span-5 lg:col-start-8 flex items-end">
-              <p className="body-lg text-white/60">{c.subtitle}</p>
+              <p className="body-lg" style={{ color: 'rgba(255,255,255,0.35)' }}>{c.subtitle}</p>
             </div>
           </div>
         </ScrollReveal>
 
-        {/* KPI Summary — premium soft tiles */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4 mb-8 lg:mb-10">
-          {c.kpis.map((kpi) => (
-            <div key={kpi.num} className="p-6 sm:p-7 lg:p-9 rounded-2xl bg-white/[0.04] backdrop-blur-md border border-white/[0.06] text-center hover:bg-white/[0.06] transition-colors">
-              <div className="flex items-baseline justify-center gap-1">
-                <span className="text-4xl sm:text-5xl lg:text-6xl font-display font-semibold text-white tracking-[-0.03em] leading-none">
-                  {kpi.num}
-                </span>
-                <span className="text-sm sm:text-base text-[var(--color-rust)] font-mono">{kpi.unit}</span>
+        {/* Operational proof */}
+        <div className="mb-8 lg:mb-10">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="h-px w-8 bg-[var(--color-rust)]" />
+            <span className="text-[11px] font-medium text-white/50">
+              {language === 'fr' ? 'Preuves opérationnelles' : language === 'en' ? 'Operational proof' : 'الأداء التشغيلي'}
+            </span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4 items-stretch">
+            {c.kpis.map((kpi, idx) => (
+              <div
+                key={kpi.num}
+                className={`min-h-[112px] p-5 sm:p-6 lg:p-7 rounded-[20px] border flex items-center gap-5 transition-colors ${
+                  idx === 0
+                    ? 'bg-[#1b1b1e]/90 border-white/[0.1] hover:bg-[#202024]'
+                    : idx === 1
+                      ? 'bg-[#1b201e]/90 border-emerald-100/[0.1] hover:bg-[#202622]'
+                      : 'bg-[#201c1c]/90 border-orange-100/[0.1] hover:bg-[#262020]'
+                }`}
+              >
+                <div className="flex shrink-0 items-baseline gap-1.5">
+                  <span className="text-4xl sm:text-5xl font-display font-semibold text-white tracking-[-0.04em] leading-none">
+                    {kpi.num}
+                  </span>
+                  <span className="text-sm text-[var(--color-rust)]">{kpi.unit}</span>
+                </div>
+                <p className="text-sm font-medium text-white/70 leading-[1.4]">
+                  {kpi.label}
+                </p>
               </div>
-              <p className="text-[10px] font-mono text-white/50 tracking-widest uppercase mt-3">
-                {kpi.label}
-              </p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        {/* Certification Pillars — premium soft cards */}
-        <div className="space-y-4 mb-8 lg:mb-10">
+        {/* Certification Pillars — corporate assurance */}
+        <div className="mb-8 lg:mb-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 auto-rows-fr gap-4 lg:gap-5 items-stretch">
           {c.pillars.map((pillar, idx) => {
             const Icon = pillar.icon;
             return (
-              <ScrollReveal key={pillar.num} delay={idx * 0.08}>
-                <div className="rounded-2xl bg-white/[0.03] backdrop-blur-md border border-white/[0.06] p-7 lg:p-10 hover:bg-white/[0.05] transition-colors">
-                  <div className="grid lg:grid-cols-12 gap-6 lg:gap-10">
-                    <div className="lg:col-span-4 flex gap-5 lg:pr-8">
-                      <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                        <Icon className="w-5 h-5 text-white" />
-                      </div>
-                      <div className="space-y-3">
-                        <span className="inline-block text-[10px] font-mono font-semibold text-[var(--color-rust)] tracking-widest uppercase">
-                          {pillar.num}
-                        </span>
-                        <h3 className="text-xl lg:text-2xl font-semibold text-white font-display tracking-tight leading-[1.15]">
-                          {pillar.title}
-                        </h3>
-                        <div className="flex items-center gap-2 text-[10px] text-white/55 font-medium tracking-[0.14em] uppercase">
-                          <span className="block w-4 h-px bg-[var(--color-rust)]" />
-                          {pillar.footer}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="lg:col-span-8 space-y-4">
-                      <p className="text-sm lg:text-base text-white/70 leading-[1.75]">
-                        {pillar.desc}
-                      </p>
-                      <div className="p-4 lg:p-5 rounded-xl bg-black/30">
-                        <span className="block text-[9px] font-mono font-bold tracking-[0.2em] text-[var(--color-rust)] uppercase mb-2">
-                          {language === 'fr' ? 'Périmètre de Certification' : language === 'en' ? 'Certification Scope' : 'نطاق الشهادة'}
-                        </span>
-                        <p className="text-[12px] text-white/65 leading-[1.65]">
-                          {pillar.scope}
-                        </p>
-                      </div>
-                    </div>
+              <ScrollReveal
+                key={pillar.num}
+                delay={idx * 0.08}
+                className={`flex self-stretch ${
+                  idx === 2 ? 'md:col-span-2 md:max-w-[calc(50%-0.5rem)] md:mx-auto xl:col-span-1 xl:max-w-none xl:mx-0' : ''
+                }`}
+              >
+                <article className={`group h-full min-h-[430px] rounded-[20px] border p-7 sm:p-8 lg:p-9 flex flex-col transition-all duration-500 hover:-translate-y-1 hover:border-white/[0.2] ${
+                  idx === 0
+                    ? 'bg-[#1b1b1e]/90 border-white/[0.1] hover:bg-[#202024]'
+                    : idx === 1
+                      ? 'bg-[#1b201e]/90 border-emerald-100/[0.1] hover:bg-[#202622]'
+                      : 'bg-[#201c1c]/90 border-orange-100/[0.1] hover:bg-[#262020]'
+                }`}>
+                  <div className="flex items-start justify-between gap-4">
+                    <p className="text-sm font-medium text-white/75 tracking-[0.03em]">
+                      {pillar.num}
+                    </p>
+                    <Icon className="w-5 h-5 text-white/45 transition-colors group-hover:text-[var(--color-rust)]" />
                   </div>
-                </div>
+
+                  <div className="mt-10">
+                    <h3 className="text-2xl lg:text-[2rem] font-semibold text-white font-display tracking-[-0.025em] leading-[1.1]">
+                      {pillar.title}
+                    </h3>
+                    <span className="mt-5 block h-px w-8 bg-[var(--color-rust)]" />
+                  </div>
+
+                  <p className="mt-7 min-h-[105px] text-[15px] text-white/70 leading-[1.75]">
+                    {pillar.desc}
+                  </p>
+
+                  <div className="mt-auto pt-6 border-t border-white/[0.12]">
+                    <span className="block text-[11px] font-medium text-white/50 mb-3">
+                      {language === 'fr' ? 'Périmètre de certification' : language === 'en' ? 'Certification scope' : 'نطاق الشهادة'}
+                    </span>
+                    <p className="text-xs text-white/60 leading-[1.7]">
+                      {pillar.scope}
+                    </p>
+                  </div>
+                </article>
               </ScrollReveal>
             );
           })}
+        </div>
         </div>
 
         <ScrollReveal>
@@ -197,7 +220,7 @@ export default function QHSE() {
             <div className="flex items-start gap-6">
               <span className="text-6xl lg:text-7xl text-[var(--color-rust)] font-display leading-none shrink-0">"</span>
               <div className="flex-1 space-y-6">
-                <p className="text-lg lg:text-2xl text-white leading-[1.5] font-display font-medium tracking-[-0.015em]">
+                <p className="text-base lg:text-xl text-white leading-[1.6] font-display font-medium tracking-[-0.015em]">
                   {c.quote}
                 </p>
                 <div className="pt-4 border-t border-white/[0.08]">

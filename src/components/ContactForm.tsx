@@ -13,6 +13,7 @@ export default function ContactForm() {
   const [success, setSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [fileError, setFileError] = useState<string | null>(null);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [emailValid, setEmailValid] = useState<boolean | null>(null);
   const [phoneValid, setPhoneValid] = useState<boolean | null>(null);
@@ -20,12 +21,39 @@ export default function ContactForm() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
-      setSelectedFiles((prev) => [...prev, ...filesArray].slice(0, 5));
+      const allowedTypes = new Set([
+        'application/pdf',
+        'image/jpeg',
+        'image/png',
+        'image/webp',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/zip',
+      ]);
+      const availableSlots = 5 - selectedFiles.length;
+      const invalidFile = filesArray.find((file) => file.size > 10 * 1024 * 1024 || !allowedTypes.has(file.type));
+
+      if (invalidFile) {
+        setFileError(
+          invalidFile.size > 10 * 1024 * 1024
+            ? `"${invalidFile.name}" dépasse la limite de 10 MB.`
+            : `Le type de fichier "${invalidFile.name}" n'est pas autorisé.`
+        );
+        return;
+      }
+      if (filesArray.length > availableSlots) {
+        setFileError('Vous pouvez joindre au maximum 5 fichiers.');
+        return;
+      }
+
+      setFileError(null);
+      setSelectedFiles((prev) => [...prev, ...filesArray]);
     }
   };
 
   const removeFile = (index: number) => {
     setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+    setFileError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -46,6 +74,7 @@ export default function ContactForm() {
         setSuccess(true);
         formRef.current.reset();
         setSelectedFiles([]);
+        setFileError(null);
       } else {
         setErrorMessage(result.error || t.contact.form.errorMessage);
       }
@@ -274,6 +303,12 @@ export default function ContactForm() {
             </span>
           </div>
         </div>
+        {fileError && (
+          <div className="mt-2 flex items-start gap-2 text-xs text-[var(--color-accent-deep)]" role="alert">
+            <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+            <span>{fileError}</span>
+          </div>
+        )}
 
         {selectedFiles.length > 0 && (
           <div className="mt-3 space-y-1.5">
@@ -288,6 +323,9 @@ export default function ContactForm() {
                   <span className="text-[10px] text-[var(--color-mist)] font-mono">
                     ({(file.size / 1024).toFixed(0)} KB)
                   </span>
+                  <p className="text-[10px] text-[var(--color-mist)] font-mono tracking-wider">
+                    {selectedFiles.length} / 5 fichiers sélectionnés
+                  </p>
                 </div>
                 <button
                   type="button"

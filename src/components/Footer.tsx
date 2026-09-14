@@ -1,11 +1,16 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useLanguage } from './LanguageContext';
 import { ArrowUpRight } from 'lucide-react';
 
 export default function Footer() {
+  const [currentYear, setCurrentYear] = useState<number | null>(null);
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
   const { language } = useLanguage();
 
   return (
@@ -120,7 +125,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-white/45">
-          <p>© {new Date().getFullYear()} SARL TAMMA SERVICES. Tous droits réservés.</p>
+          <p>© {currentYear ?? ''} SARL TAMMA SERVICES. Tous droits réservés.</p>
           <p className="tracking-wide">
             Étude · Ingénierie · Réalisation
           </p>

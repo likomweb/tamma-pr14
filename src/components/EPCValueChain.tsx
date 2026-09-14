@@ -74,7 +74,7 @@ export default function EPCValueChain() {
         </ScrollReveal>
 
         {/* Step Tabs — premium pill nav */}
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="flex flex-nowrap gap-1 sm:gap-2 mb-8 w-full overflow-x-auto">
           {t.steps.map((s, idx) => {
             const Icon = icons[idx];
             const isActive = activeStep === idx;
@@ -83,7 +83,7 @@ export default function EPCValueChain() {
                 key={idx}
                 type="button"
                 onClick={() => setActiveStep(idx)}
-                className={`group flex items-center gap-3 px-5 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
+                className={`group flex shrink-0 items-center gap-2 sm:gap-3 px-3 sm:px-5 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
                   isActive
                     ? 'bg-[var(--color-ink)] text-white shadow-md'
                     : 'bg-white text-[var(--color-graphite)] hover:text-[var(--color-ink)] shadow-sm hover:shadow-md'
@@ -100,7 +100,7 @@ export default function EPCValueChain() {
         </div>
 
         {/* Active Step — premium card */}
-        <div className="card p-8 lg:p-12">
+        <div className="card editorial-interactive p-8 lg:p-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
             <div className="lg:col-span-4 space-y-5">
               <div className="flex items-center gap-3">
