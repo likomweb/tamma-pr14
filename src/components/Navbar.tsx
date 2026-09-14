@@ -17,8 +17,8 @@ export default function Navbar() {
   const langDropdownRef = useRef<HTMLDivElement>(null);
   const langDropdownRefDesktop = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuTouchStart = useRef<number | null>(null);
+  const menuTouchHandledAt = useRef(0);
 
   useEffect(() => {
     setMounted(true);
@@ -81,39 +81,10 @@ export default function Navbar() {
         setMenuOpen(false);
         return;
       }
-      if (e.key !== 'Tab' || !menuOpen || !mobileMenuRef.current) return;
-      const focusable = mobileMenuRef.current.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled])'
-      );
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [menuOpen]);
-
-  useEffect(() => {
-    if (!menuOpen) return;
-    const previousBodyOverflow = document.body.style.overflow;
-    const previousHtmlOverflow = document.documentElement.style.overflow;
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
-    const firstFocusable = mobileMenuRef.current?.querySelector<HTMLElement>('a[href], button:not([disabled])');
-    firstFocusable?.focus();
-    return () => {
-      document.body.style.overflow = previousBodyOverflow;
-      document.documentElement.style.overflow = previousHtmlOverflow;
-      menuButtonRef.current?.focus();
-    };
-  }, [menuOpen]);
+  }, []);
 
   // Close language dropdowns on outside click
   useEffect(() => {
@@ -131,6 +102,16 @@ export default function Navbar() {
 
   // Close menu on nav link click
   const closeMenu = () => setMenuOpen(false);
+  const toggleMenu = () => setMenuOpen((open) => !open);
+  const handleMenuClick = () => {
+    if (Date.now() - menuTouchHandledAt.current < 500) return;
+    toggleMenu();
+  };
+  const handleMenuTouchEnd = (event: React.TouchEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    menuTouchHandledAt.current = Date.now();
+    toggleMenu();
+  };
 
   const navLinks = [
     { id: 'about' },
@@ -330,8 +311,8 @@ export default function Navbar() {
               {/* Hamburger / Close button */}
               <button
                 type="button"
-                ref={menuButtonRef}
-                onClick={() => setMenuOpen(!menuOpen)}
+                onClick={handleMenuClick}
+                onTouchEnd={handleMenuTouchEnd}
                 aria-label={menuOpen ? t.menuClose : 'Menu'}
                 aria-expanded={menuOpen}
                 aria-controls="mobile-navigation"

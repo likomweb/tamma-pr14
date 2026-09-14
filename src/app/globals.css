@@ -194,21 +194,6 @@
     outline-offset: 3px;
   }
 
-  /* Global scroll offset for fixed navbar — every anchor link clears the header */
-  section[id], div[id] {
-    scroll-margin-top: 88px;
-  }
-  @media (min-width: 1024px) {
-    section[id], div[id] {
-      scroll-margin-top: 108px;
-    }
-  }
-  @media (max-width: 1023px) {
-    html {
-      scroll-behavior: auto;
-    }
-  }
-
   /* Selection inversion on dark sections */
   .scroll-dark ::selection,
   section.bg-\[\#08090b\] ::selection,
